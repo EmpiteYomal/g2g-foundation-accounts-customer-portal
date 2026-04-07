@@ -1,0 +1,93 @@
+"use client";
+
+import { Bell, Menu, Search, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+
+type HeaderProps = {
+  onMenuClick: () => void;
+};
+
+export function Header({ onMenuClick }: HeaderProps) {
+  return (
+    <header className="bg-white border-b border-border px-6 py-3.5 flex items-center gap-4 flex-shrink-0">
+      {/* Mobile menu */}
+      <button
+        onClick={onMenuClick}
+        className="lg:hidden text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <Menu className="w-5 h-5" />
+      </button>
+
+      {/* Page title area */}
+      <div className="flex-1">
+        <div className="relative max-w-xs hidden sm:block">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search transactions, rules..."
+            className="pl-9 h-9 rounded-xl bg-muted/60 border-0 text-sm focus-visible:ring-1 focus-visible:ring-primary/40"
+          />
+        </div>
+      </div>
+
+      {/* Right side */}
+      <div className="flex items-center gap-2">
+        {/* Pending approvals callout */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="hidden sm:flex items-center gap-2 rounded-xl h-9 text-sm border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 hover:border-amber-300"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          3 pending approvals
+        </Button>
+
+        {/* Notifications */}
+        <div className="relative">
+          <Button variant="ghost" size="icon" className="rounded-xl h-9 w-9 text-muted-foreground">
+            <Bell className="w-4 h-4" />
+          </Button>
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary border-2 border-white" />
+        </div>
+
+        {/* User menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-muted/60 transition-colors outline-none">
+              <Avatar className="w-7 h-7">
+                <AvatarFallback className="brand-gradient text-white text-xs font-bold">
+                  JS
+                </AvatarFallback>
+              </Avatar>
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-semibold text-foreground leading-tight">Jane Smith</p>
+                <p className="text-[10px] text-muted-foreground leading-tight">Trustee</p>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-52 rounded-2xl">
+            <DropdownMenuLabel className="font-normal">
+              <p className="font-semibold">Jane Smith</p>
+              <p className="text-xs text-muted-foreground">jane@kfc.com.au</p>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="rounded-xl">Profile</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-xl">Account Settings</DropdownMenuItem>
+            <DropdownMenuItem className="rounded-xl">Switch Organisation</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="rounded-xl text-destructive focus:text-destructive">Sign Out</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  );
+}
