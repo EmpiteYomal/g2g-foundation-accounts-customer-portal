@@ -48,11 +48,11 @@ export function GivingRulesPanel() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-              <GitBranch className="w-3.5 h-3.5 text-blue-600" />
+              <GitBranch className="w-3.5 h-3.5 text-blue-800" />
             </div>
-            <CardTitle className="text-base font-semibold">Giving Rules</CardTitle>
+            <CardTitle className="text-sm font-semibold">Giving Rules</CardTitle>
           </div>
-          <Button variant="ghost" size="sm" className="rounded-xl h-7 w-7 p-0 text-muted-foreground hover:text-primary">
+          <Button variant="ghost" size="sm" className="rounded-xl h-7 w-7 p-0 text-muted-foreground hover:text-blue-800">
             <Plus className="w-4 h-4" />
           </Button>
         </div>
@@ -63,38 +63,38 @@ export function GivingRulesPanel() {
           return (
             <div
               key={rule.id}
-              className="flex items-start gap-3 p-3 rounded-xl border border-border hover:border-primary/30 hover:bg-primary/2 transition-all cursor-pointer group"
+              className="flex items-start gap-3 p-3 rounded-xl border border-border hover:border-blue-200 hover:bg-blue-50/40 transition-all cursor-pointer group"
             >
               <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                rule.status === "active" ? "bg-primary/10" : "bg-muted"
+                rule.status === "active" ? "bg-blue-50" : "bg-muted"
               }`}>
-                <Icon className={`w-3.5 h-3.5 ${rule.status === "active" ? "text-primary" : "text-muted-foreground"}`} />
+                <Icon className={`w-3.5 h-3.5 ${rule.status === "active" ? "text-blue-800" : "text-muted-foreground"}`} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <p className="text-xs font-semibold text-foreground truncate">{rule.name}</p>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                  <p className="text-sm font-semibold text-foreground truncate">{rule.name}</p>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
                     rule.status === "active"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-amber-50 text-amber-700"
+                      ? "bg-emerald-50 text-emerald-800"
+                      : "bg-amber-50 text-amber-900"
                   }`}>
                     {rule.status}
                   </span>
                 </div>
-                <p className="text-[11px] text-muted-foreground">{rule.frequency}</p>
-                <p className="text-[11px] text-muted-foreground truncate">
+                <p className="text-xs text-muted-foreground">{rule.frequency}</p>
+                <p className="text-xs text-muted-foreground truncate">
                   {rule.charities.join(" · ")}
                 </p>
-                <p className="text-[11px] text-primary/70 mt-0.5 font-medium">
+                <p className="text-xs text-blue-800/80 mt-0.5 font-medium">
                   Next: {rule.nextRun}
                 </p>
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-primary/50 transition-colors flex-shrink-0 mt-1" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-blue-400 transition-colors flex-shrink-0 mt-1" />
             </div>
           );
         })}
 
-        <Button variant="outline" size="sm" className="w-full rounded-xl h-8 text-xs gap-1.5 border-dashed border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/50">
+        <Button variant="outline" size="sm" className="w-full rounded-xl h-8 text-xs gap-1.5 border-dashed border-blue-300 text-blue-800 hover:bg-blue-50 hover:border-blue-400">
           <Plus className="w-3.5 h-3.5" /> Add new rule
         </Button>
       </CardContent>

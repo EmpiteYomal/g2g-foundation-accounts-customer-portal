@@ -57,10 +57,10 @@ const transactions = [
 ];
 
 const statusConfig: Record<string, { label: string; class: string }> = {
-  completed: { label: "Completed", class: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  processing: { label: "Processing", class: "bg-blue-50 text-blue-700 border-blue-200" },
-  pending: { label: "Pending", class: "bg-amber-50 text-amber-700 border-amber-200" },
-  failed: { label: "Failed", class: "bg-red-50 text-red-700 border-red-200" },
+  completed: { label: "Completed", class: "bg-emerald-50 text-emerald-800 border-emerald-200" },
+  processing: { label: "Processing", class: "bg-blue-50 text-blue-800 border-blue-200" },
+  pending: { label: "Pending", class: "bg-amber-50 text-amber-900 border-amber-200" },
+  failed: { label: "Failed", class: "bg-red-50 text-red-800 border-red-200" },
 };
 
 export function RecentTransactions() {
@@ -68,7 +68,7 @@ export function RecentTransactions() {
     <Card className="rounded-2xl border-border shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base font-semibold">Recent Transactions</CardTitle>
+          <CardTitle className="text-sm font-semibold">Recent Transactions</CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="text-xs text-muted-foreground rounded-xl gap-1 h-8">
               <Download className="w-3.5 h-3.5" /> Export
@@ -102,20 +102,20 @@ export function RecentTransactions() {
                     </td>
                     <td className="px-2 py-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full brand-gradient flex items-center justify-center flex-shrink-0">
-                          <span className="text-white text-[9px] font-bold">{txn.charity[0]}</span>
+                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-[10px] font-bold">{txn.charity[0]}</span>
                         </div>
-                        <span className="font-medium text-foreground text-xs">{txn.charity}</span>
+                        <span className="font-medium text-foreground text-sm">{txn.charity}</span>
                       </div>
                     </td>
                     <td className="px-2 py-3 hidden sm:table-cell">
-                      <span className="text-xs text-muted-foreground">{txn.method}</span>
+                      <span className="text-sm text-muted-foreground">{txn.method}</span>
                     </td>
                     <td className="px-2 py-3 text-right">
-                      <span className="font-semibold text-sm text-emerald-700">{txn.amount}</span>
+                      <span className="font-semibold text-sm text-emerald-800">{txn.amount}</span>
                     </td>
                     <td className="px-2 py-3 text-right">
-                      <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${s.class}`}>
+                      <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${s.class}`}>
                         {s.label}
                       </span>
                     </td>

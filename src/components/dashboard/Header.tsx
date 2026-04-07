@@ -1,8 +1,7 @@
 "use client";
 
-import { Bell, Menu, Search, ChevronDown } from "lucide-react";
+import { Bell, Menu, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -29,16 +28,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Menu className="w-5 h-5" />
       </button>
 
-      {/* Page title area */}
-      <div className="flex-1">
-        <div className="relative max-w-xs hidden sm:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search transactions, rules..."
-            className="pl-9 h-9 rounded-xl bg-muted/60 border-0 text-sm focus-visible:ring-1 focus-visible:ring-primary/40"
-          />
-        </div>
-      </div>
+      <div className="flex-1" />
 
       {/* Right side */}
       <div className="flex items-center gap-2">
@@ -46,7 +36,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Button
           variant="outline"
           size="sm"
-          className="hidden sm:flex items-center gap-2 rounded-xl h-9 text-sm border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-100 hover:text-amber-800 hover:border-amber-300"
+          className="hidden sm:flex items-center gap-2 rounded-xl h-9 text-sm border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:text-amber-950 hover:border-amber-300"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
           3 pending approvals
@@ -64,13 +54,13 @@ export function Header({ onMenuClick }: HeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl hover:bg-muted/60 transition-colors outline-none">
               <Avatar className="w-7 h-7">
-                <AvatarFallback className="brand-gradient text-white text-xs font-bold">
+                <AvatarFallback className="bg-primary text-white text-xs font-bold">
                   JS
                 </AvatarFallback>
               </Avatar>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-semibold text-foreground leading-tight">Jane Smith</p>
-                <p className="text-[10px] text-muted-foreground leading-tight">Trustee</p>
+                <p className="text-xs text-muted-foreground leading-tight">Trustee</p>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>

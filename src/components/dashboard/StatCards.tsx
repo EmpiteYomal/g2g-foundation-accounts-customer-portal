@@ -11,8 +11,8 @@ const stats = [
     trend: "+7.1%",
     positive: true,
     icon: DollarSign,
-    color: "text-primary",
-    bg: "bg-primary/10",
+    color: "text-violet-600",
+    bg: "bg-violet-50",
   },
   {
     label: "Pending Approval",
@@ -57,7 +57,7 @@ export function StatCards() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.08 }}
           className={`bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition-shadow ${
-            stat.urgent ? "border-amber-200" : "border-border"
+            "border-border"
           }`}
         >
           <div className="flex items-start justify-between mb-3">
@@ -65,25 +65,25 @@ export function StatCards() {
               <stat.icon className={`w-4.5 h-4.5 ${stat.color}`} style={{ width: "18px", height: "18px" }} />
             </div>
             {stat.urgent && (
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              <span className="flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                 Urgent
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground font-medium mb-1">{stat.label}</p>
+          <p className="text-sm text-muted-foreground font-medium mb-1">{stat.label}</p>
           <p className="text-2xl font-bold text-foreground leading-none mb-1.5">{stat.value}</p>
           <div className="flex items-center gap-1.5">
-            <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${
+            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
               stat.positive
-                ? "text-emerald-700 bg-emerald-50"
+                ? "text-emerald-800 bg-emerald-50"
                 : stat.urgent
-                ? "text-amber-700 bg-amber-50"
+                ? "text-amber-900 bg-amber-50"
                 : "text-muted-foreground bg-muted"
             }`}>
               {stat.trend}
             </span>
-            <span className="text-[11px] text-muted-foreground">{stat.sub}</span>
+            <span className="text-xs text-muted-foreground">{stat.sub}</span>
           </div>
         </motion.div>
       ))}

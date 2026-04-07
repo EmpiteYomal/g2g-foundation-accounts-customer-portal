@@ -132,7 +132,7 @@ export function StepCompany({ data, onChange, onNext, onBack }: Props) {
         <Button
           onClick={onNext}
           disabled={!isValid}
-          className="rounded-full px-6 h-10 brand-gradient border-0 hover:opacity-90 transition-opacity shadow-md shadow-primary/20 disabled:opacity-40 disabled:pointer-events-none"
+          className="rounded-full px-6 h-10 bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:pointer-events-none"
         >
           Continue <ArrowRight className="w-4 h-4 ml-1" />
         </Button>

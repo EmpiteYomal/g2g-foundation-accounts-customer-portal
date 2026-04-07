@@ -10,8 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, ArrowLeft, Plug, RefreshCw, Percent } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { ArrowRight, ArrowLeft, Plug, Percent } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -71,86 +70,46 @@ export function StepIntegration({ data, onChange, onNext, onBack }: Props) {
               placeholder="sk-••••••••••••••••"
               value={data.apiKey}
               onChange={(e) => onChange({ apiKey: e.target.value })}
-              className="h-11 rounded-xl font-mono text-sm"
+              className="h-11 rounded-xl font-mono text-base"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Found in your {data.posSystem} developer settings. We encrypt and store this securely.
             </p>
           </div>
         )}
 
-        {/* Donation modes */}
+        {/* Donation modes — percentage only */}
         <div className="space-y-3">
           <Label>Donation collection method</Label>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => onChange({ roundupEnabled: !data.roundupEnabled })}
-              className={cn(
-                "flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all",
-                data.roundupEnabled
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/40"
-              )}
-            >
-              <div className={cn(
-                "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
-                data.roundupEnabled ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-              )}>
-                <RefreshCw className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-foreground">Round-up</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Round each transaction up to the next dollar and donate the difference.
-                </p>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onChange({ percentageEnabled: !data.percentageEnabled })}
-              className={cn(
-                "flex items-start gap-3 p-4 rounded-2xl border-2 text-left transition-all",
-                data.percentageEnabled
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/40"
-              )}
-            >
-              <div className={cn(
-                "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0",
-                data.percentageEnabled ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-              )}>
-                <Percent className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-foreground">Percentage of sales</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Donate a fixed percentage of each transaction automatically.
-                </p>
-              </div>
-            </button>
+          <div className="flex items-start gap-3 p-4 rounded-2xl border-2 border-primary bg-primary/5">
+            <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center flex-shrink-0">
+              <Percent className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-semibold text-base text-foreground">Percentage of sales</p>
+              <p className="text-base text-muted-foreground mt-0.5">
+                Donate a fixed percentage of each transaction automatically.
+              </p>
+            </div>
           </div>
 
-          {data.percentageEnabled && (
-            <div className="flex items-center gap-3 pl-1">
-              <Label htmlFor="pct" className="whitespace-nowrap text-sm">Percentage rate</Label>
-              <div className="relative max-w-[120px]">
-                <Input
-                  id="pct"
-                  type="number"
-                  min="0.1"
-                  max="100"
-                  step="0.1"
-                  value={data.percentage}
-                  onChange={(e) => onChange({ percentage: e.target.value })}
-                  className="h-9 rounded-xl pr-7 text-sm"
-                />
-                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
-              </div>
-              <span className="text-xs text-muted-foreground">of each transaction</span>
+          <div className="flex items-center gap-3 pl-1">
+            <Label htmlFor="pct" className="whitespace-nowrap text-base">Percentage rate</Label>
+            <div className="relative max-w-[120px]">
+              <Input
+                id="pct"
+                type="number"
+                min="0.1"
+                max="100"
+                step="0.1"
+                value={data.percentage}
+                onChange={(e) => onChange({ percentage: e.target.value })}
+                className="h-9 rounded-xl pr-7 text-base"
+              />
+              <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-base">%</span>
             </div>
-          )}
+            <span className="text-base text-muted-foreground">of each transaction</span>
+          </div>
         </div>
       </div>
 
@@ -165,7 +124,7 @@ export function StepIntegration({ data, onChange, onNext, onBack }: Props) {
         <Button
           onClick={onNext}
           disabled={!isValid}
-          className="rounded-full px-6 h-10 brand-gradient border-0 hover:opacity-90 transition-opacity shadow-md shadow-primary/20 disabled:opacity-40 disabled:pointer-events-none"
+          className="rounded-full px-6 h-10 bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:pointer-events-none"
         >
           Continue <ArrowRight className="w-4 h-4 ml-1" />
         </Button>

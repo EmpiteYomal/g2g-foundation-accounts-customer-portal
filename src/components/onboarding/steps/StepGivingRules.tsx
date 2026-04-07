@@ -85,7 +85,7 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
                 type="button"
                 onClick={() => onChange({ frequency: f.value })}
                 className={cn(
-                  "px-4 py-2 rounded-full text-sm font-medium border transition-all",
+                  "px-4 py-2 rounded-full text-base font-medium border transition-all",
                   data.frequency === f.value
                     ? "bg-primary text-white border-primary shadow-sm shadow-primary/20"
                     : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
@@ -102,7 +102,7 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
           <div className="flex items-center justify-between">
             <Label>Charity allocation</Label>
             <div className={cn(
-              "flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full transition-colors",
+              "flex items-center gap-1.5 text-base font-medium px-3 py-1 rounded-full transition-colors",
               totalAllocation === 100
                 ? "bg-green-50 text-green-700"
                 : totalAllocation > 100
@@ -133,7 +133,7 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
               <div key={i} className="flex items-center gap-2">
                 <div className="flex-1">
                   <Select value={charity.name} onValueChange={(v) => updateCharity(i, "name", v ?? "")}>
-                    <SelectTrigger className="h-10 rounded-xl text-sm">
+                    <SelectTrigger className="h-10 rounded-xl text-base">
                       <SelectValue placeholder="Select a charity" />
                     </SelectTrigger>
                     <SelectContent>
@@ -150,9 +150,9 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
                     max="100"
                     value={charity.allocation}
                     onChange={(e) => updateCharity(i, "allocation", Number(e.target.value))}
-                    className="h-10 rounded-xl pr-6 text-sm text-center"
+                    className="h-10 rounded-xl pr-6 text-base text-center"
                   />
-                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">%</span>
+                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-base">%</span>
                 </div>
                 <button
                   type="button"
@@ -169,14 +169,14 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
             <button
               type="button"
               onClick={addCharity}
-              className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+              className="flex items-center gap-2 text-base text-primary hover:text-primary/80 font-medium transition-colors"
             >
               <Plus className="w-4 h-4" /> Add charity
             </button>
           )}
 
           {totalAllocation !== 100 && data.charities.length > 0 && (
-            <p className="text-xs text-amber-600 flex items-center gap-1.5">
+            <p className="text-base text-amber-600 flex items-center gap-1.5">
               <AlertCircle className="w-3 h-3" />
               Allocations must total exactly 100% to continue.
             </p>
@@ -195,7 +195,7 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
         <Button
           onClick={onNext}
           disabled={!isValid}
-          className="rounded-full px-6 h-10 brand-gradient border-0 hover:opacity-90 transition-opacity shadow-md shadow-primary/20 disabled:opacity-40 disabled:pointer-events-none"
+          className="rounded-full px-6 h-10 bg-primary hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:pointer-events-none"
         >
           Continue <ArrowRight className="w-4 h-4 ml-1" />
         </Button>

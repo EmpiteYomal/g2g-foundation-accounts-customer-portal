@@ -32,8 +32,6 @@ export function StepComplete({ data, onFinish }: Props) {
     })();
   }, []);
 
-  const allDone = checked.length === steps.length;
-
   return (
     <div className="text-center space-y-10">
       {/* Icon */}
@@ -41,7 +39,7 @@ export function StepComplete({ data, onFinish }: Props) {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 200, damping: 18 }}
-        className="mx-auto w-20 h-20 rounded-full brand-gradient flex items-center justify-center shadow-2xl shadow-primary/30"
+        className="mx-auto w-20 h-20 rounded-full bg-primary flex items-center justify-center"
       >
         <CheckCircle2 className="w-10 h-10 text-white" />
       </motion.div>
@@ -71,8 +69,8 @@ export function StepComplete({ data, onFinish }: Props) {
               }`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground">{step.label}</p>
-              <p className="text-xs text-muted-foreground truncate">{step.sub}</p>
+              <p className="text-base font-semibold text-foreground">{step.label}</p>
+              <p className="text-base text-muted-foreground truncate">{step.sub}</p>
             </div>
             <motion.div
               initial={{ scale: 0 }}
@@ -85,22 +83,16 @@ export function StepComplete({ data, onFinish }: Props) {
         ))}
       </div>
 
-      {allDone && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col items-center gap-3"
+      <div className="flex flex-col items-center gap-3">
+        <Button
+          size="lg"
+          onClick={onFinish}
+          className="rounded-full px-8 h-12 text-base font-semibold bg-primary hover:bg-primary/90 transition-colors"
         >
-          <Button
-            size="lg"
-            onClick={onFinish}
-            className="rounded-full px-8 h-12 text-base font-semibold brand-gradient border-0 hover:opacity-90 transition-opacity shadow-lg shadow-primary/25"
-          >
-            Go to Dashboard <ArrowRight className="w-4 h-4 ml-1" />
-          </Button>
-          <p className="text-xs text-muted-foreground">Your first transaction report will be ready within 24 hours.</p>
-        </motion.div>
-      )}
+          Go to Dashboard <ArrowRight className="w-4 h-4 ml-1" />
+        </Button>
+        <p className="text-base text-muted-foreground">Your first transaction report will be ready within 24 hours.</p>
+      </div>
     </div>
   );
 }
