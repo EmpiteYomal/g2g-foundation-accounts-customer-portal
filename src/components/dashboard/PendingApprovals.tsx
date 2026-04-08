@@ -4,6 +4,14 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { CheckCircle2, XCircle, Clock, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
@@ -40,21 +48,28 @@ const approvals = [
   },
 ];
 
+type ConfirmState = { id: string; action: "approve" | "decline" } | null;
+
 export function PendingApprovals() {
   const [items, setItems] = useState(approvals);
+  const [confirm, setConfirm] = useState<ConfirmState>(null);
 
-  const approve = (id: string) => {
-    setItems((prev) => prev.filter((a) => a.id !== id));
-    toast.success("Transfer approved", {
-      description: `${id} has been approved and queued for processing.`,
-    });
-  };
+  const confirmingItem = items.find((a) => a.id === confirm?.id);
 
-  const reject = (id: string) => {
+  const handleConfirm = () => {
+    if (!confirm) return;
+    const { id, action } = confirm;
     setItems((prev) => prev.filter((a) => a.id !== id));
-    toast.error("Transfer declined", {
-      description: `${id} has been declined.`,
-    });
+    setConfirm(null);
+    if (action === "approve") {
+      toast.success("Transfer approved", {
+        description: `${id} has been approved and queued for processing.`,
+      });
+    } else {
+      toast.error("Transfer declined", {
+        description: `${id} has been declined.`,
+      });
+    }
   };
 
   if (items.length === 0) {
@@ -125,14 +140,14 @@ export function PendingApprovals() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => reject(item.id)}
+                  onClick={() => setConfirm({ id: item.id, action: "decline" })}
                   className="rounded-xl h-8 px-3 text-xs border-red-200 text-red-800 hover:bg-red-50 hover:text-red-900 hover:border-red-300"
                 >
                   <XCircle className="w-3.5 h-3.5 mr-1" /> Decline
                 </Button>
                 <Button
                   size="sm"
-                  onClick={() => approve(item.id)}
+                  onClick={() => setConfirm({ id: item.id, action: "approve" })}
                   className="rounded-xl h-8 px-3 text-xs bg-emerald-700 hover:bg-emerald-800 text-white transition-colors"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Approve
@@ -142,6 +157,45 @@ export function PendingApprovals() {
           </div>
         ))}
       </CardContent>
+
+      <Dialog open={!!confirm} onOpenChange={(open) => !open && setConfirm(null)}>
+        <DialogContent className="rounded-2xl max-w-sm">
+          <DialogHeader>
+            <DialogTitle>
+              {confirm?.action === "approve" ? "Approve transfer?" : "Decline transfer?"}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmingItem && (
+                <>
+                  {confirm?.action === "approve"
+                    ? `This will approve ${confirmingItem.amount} to ${confirmingItem.charity} for ${confirmingItem.period}.`
+                    : `This will decline the ${confirmingItem.amount} transfer to ${confirmingItem.charity}.`}
+                  {" "}This action cannot be undone.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" className="rounded-xl" onClick={() => setConfirm(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              className={
+                confirm?.action === "approve"
+                  ? "rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white"
+                  : "rounded-xl bg-red-600 hover:bg-red-700 text-white"
+              }
+            >
+              {confirm?.action === "approve" ? (
+                <><CheckCircle2 className="w-4 h-4 mr-1.5" /> Approve</>
+              ) : (
+                <><XCircle className="w-4 h-4 mr-1.5" /> Decline</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
