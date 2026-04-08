@@ -7,23 +7,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { ArrowRight, ShieldCheck, Zap, BarChart3, Eye, EyeOff, Check } from "lucide-react";
+import { ArrowRight, ShieldCheck, Heart, BarChart3, Eye, EyeOff, Check, CreditCard } from "lucide-react";
 
 const features = [
   {
-    icon: Zap,
-    title: "Automated Reconciliation",
-    desc: "Upload your sales reports via SFTP — bulk transfers are automatically matched and reconciled.",
+    icon: Heart,
+    title: "Multi-Channel Donation Collection",
+    desc: "Accept donations via bank transfer, cards, crypto, stocks, POS round-ups, and more.",
   },
   {
     icon: BarChart3,
-    title: "Percentage of Sales Giving",
-    desc: "Set your giving rate once. Funds distribute to your chosen DGR charities each period.",
+    title: "Full Foundation Account Visibility",
+    desc: "Real-time balance, monthly totals, pending disbursements, and full transaction history.",
   },
   {
     icon: ShieldCheck,
-    title: "Trustee Approval",
-    desc: "Every transfer requires an authorised approval — total peace of mind.",
+    title: "Trustee-Controlled Distributions",
+    desc: "Every disbursement to a charity requires trustee approval — total compliance and peace of mind.",
+  },
+  {
+    icon: CreditCard,
+    title: "G2G-Verified Charity Network",
+    desc: "Distribute funds to any G2G-approved charity with built-in compliance and anti-fraud checks.",
   },
 ];
 
@@ -90,17 +95,16 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
           <div className="mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-base font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              Donation Accounts Portal
+              Foundation Account Platform
             </div>
 
             <h1 className="text-4xl xl:text-5xl font-bold text-foreground leading-tight tracking-tight mb-5">
-              Turn every sale into{" "}
-              <span className="text-primary">community impact.</span>
+              Your foundation for{" "}
+              <span className="text-primary">community giving.</span>
             </h1>
 
             <p className="text-muted-foreground text-base leading-relaxed max-w-sm">
-              Good2Give Donation Accounts is your secure corporate giving dashboard —
-              automated collections, smart distribution, and full audit transparency.
+              The Good2Give Foundation Account Platform lets your organisation collect, manage, and distribute charitable funds — with full trustee oversight and compliance built in.
             </p>
           </div>
 
@@ -162,7 +166,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
                 Create your account
               </h2>
               <p className="text-muted-foreground text-base mt-1">
-                Already have an account?{" "}
+                Register your organisation on the Foundation Account Platform.{" "}
                 <a href="/sign-in" className="text-primary font-medium hover:underline">
                   Sign in
                 </a>

@@ -9,9 +9,7 @@ const charities = [
   { name: "Salvation Army",      allocation: 40, mtd: 336.00, color: "hsl(45, 75%, 50%)" },
 ];
 
-const givingRate = 1;
-const mtdSales = 84200;
-const mtdDonated = mtdSales * (givingRate / 100);
+const mtdDonated = 842.00;
 
 // Last 6 months of giving
 const monthlyTrend = [
@@ -38,17 +36,6 @@ export function GivingRatePanel() {
       </CardHeader>
 
       <CardContent className="space-y-5 pt-0 flex-1 flex flex-col">
-        {/* Rate highlight */}
-        <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50/60 border border-blue-100">
-          <div className="w-10 h-10 rounded-xl bg-blue-800 flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-sm font-bold">{givingRate}%</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">of every sale</p>
-            <p className="text-xs text-muted-foreground">applied per bulk transfer · SFTP reconciled</p>
-          </div>
-        </div>
-
         {/* MTD impact */}
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">

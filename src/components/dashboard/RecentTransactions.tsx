@@ -12,12 +12,12 @@ const charityLogo: Record<string, string> = {
 };
 
 const transactions = [
-  { id: "TXN-8842", charity: "Red Cross Australia", amount: "+$2,904.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "60%", status: "completed"  },
-  { id: "TXN-8841", charity: "Salvation Army",      amount: "+$1,936.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "40%", status: "completed"  },
-  { id: "TXN-8840", charity: "Red Cross Australia", amount: "+$2,611.50", date: "Mar 31, 2026", givingRate: "1%", charityShare: "60%", status: "completed"  },
-  { id: "TXN-8839", charity: "Salvation Army",      amount: "+$1,741.00", date: "Mar 31, 2026", givingRate: "1%", charityShare: "40%", status: "completed"  },
-  { id: "TXN-8838", charity: "Beyond Blue",         amount: "+$500.00",   date: "Mar 28, 2026", givingRate: "1%", charityShare: "60%", status: "processing" },
-  { id: "TXN-8837", charity: "Cancer Council",      amount: "+$350.00",   date: "Mar 24, 2026", givingRate: "1%", charityShare: "40%", status: "completed"  },
+  { id: "TXN-8842", charity: "Red Cross Australia", amount: "+$2,904.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "60%", givingId: "GIVING-221", status: "completed"  },
+  { id: "TXN-8841", charity: "Salvation Army",      amount: "+$1,936.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "40%", givingId: "GIVING-221", status: "completed"  },
+  { id: "TXN-8840", charity: "Red Cross Australia", amount: "+$2,611.50", date: "Mar 31, 2026", givingRate: "1%", charityShare: "60%", givingId: "GIVING-208", status: "completed"  },
+  { id: "TXN-8839", charity: "Salvation Army",      amount: "+$1,741.00", date: "Mar 31, 2026", givingRate: "1%", charityShare: "40%", givingId: "GIVING-208", status: "completed"  },
+  { id: "TXN-8838", charity: "Beyond Blue",         amount: "+$500.00",   date: "Mar 28, 2026", givingRate: "1%", charityShare: "60%", givingId: "GIVING-198", status: "processing" },
+  { id: "TXN-8837", charity: "Cancer Council",      amount: "+$350.00",   date: "Mar 24, 2026", givingRate: "1%", charityShare: "40%", givingId: "GIVING-198", status: "completed"  },
 ];
 
 const statusConfig: Record<string, { label: string; class: string }> = {
@@ -79,12 +79,8 @@ export function RecentTransactions() {
                     </td>
                     <td className="px-2 py-3 hidden sm:table-cell">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-medium text-foreground bg-muted px-2 py-0.5 rounded-full">
-                          {txn.givingRate} of sales
-                        </span>
-                        <span className="text-xs text-muted-foreground">→</span>
                         <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
-                          {txn.charityShare} share
+                          {txn.charityShare} · {txn.givingId}
                         </span>
                       </div>
                     </td>

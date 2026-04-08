@@ -4,16 +4,17 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { StepWelcome } from "./steps/StepWelcome";
+import { StepAccountType } from "./steps/StepAccountType";
 import { StepCompany } from "./steps/StepCompany";
-import { StepBanking } from "./steps/StepBanking";
-import { StepGivingRules } from "./steps/StepGivingRules";
 import { StepTrustee } from "./steps/StepTrustee";
-import { StepReporting } from "./steps/StepReporting";
 import { StepComplete } from "./steps/StepComplete";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 
+export type AccountType = "org" | "person";
+
 export type OnboardingData = {
+  accountType: AccountType | null;
   company: {
     name: string;
     abn: string;
@@ -26,19 +27,6 @@ export type OnboardingData = {
     postcode: string;
     logoFileName: string;
   };
-  banking: {
-    accountName: string;
-    bsb: string;
-    accountNumber: string;
-    bankDocFileName: string;
-    givingPercentage: string;
-    financeContactName: string;
-    financeContactEmail: string;
-  };
-  givingRules: {
-    founderDeclared: boolean;
-    charities: { name: string; allocation: number }[];
-  };
   trustee: {
     firstName: string;
     lastName: string;
@@ -46,30 +34,26 @@ export type OnboardingData = {
     phone: string;
     role: string;
     dateOfBirth: string;
-    additionalUsers: { name: string; position: string; email: string }[];
-  };
-  reporting: {
-    frequency: string;
   };
 };
 
-const STEPS = [
+// Steps shown in the header nav (excludes Welcome step 0)
+const ORG_STEPS = [
   { id: 0, label: "Welcome" },
-  { id: 1, label: "Organisation" },
-  { id: 2, label: "Banking" },
-  { id: 3, label: "Compliance" },
-  { id: 4, label: "Users" },
-  { id: 5, label: "Reporting" },
-  { id: 6, label: "Complete" },
+  { id: 1, label: "Account type" },
+  { id: 2, label: "Organisation" },
+  { id: 3, label: "Trustee" },
+  { id: 4, label: "Complete" },
 ];
 
-const TOTAL_STEPS = STEPS.length - 1;
+const TOTAL_STEPS = ORG_STEPS.length - 1;
 
 export function OnboardingFlow() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [data, setData] = useState<OnboardingData>({
+    accountType: null,
     company: {
       name: "",
       abn: "",
@@ -82,22 +66,6 @@ export function OnboardingFlow() {
       postcode: "",
       logoFileName: "",
     },
-    banking: {
-      accountName: "",
-      bsb: "",
-      accountNumber: "",
-      bankDocFileName: "",
-      givingPercentage: "1",
-      financeContactName: "",
-      financeContactEmail: "",
-    },
-    givingRules: {
-      founderDeclared: false,
-      charities: [
-        { name: "Red Cross Australia", allocation: 60 },
-        { name: "Salvation Army", allocation: 40 },
-      ],
-    },
     trustee: {
       firstName: "",
       lastName: "",
@@ -105,14 +73,12 @@ export function OnboardingFlow() {
       phone: "",
       role: "",
       dateOfBirth: "",
-      additionalUsers: [],
-    },
-    reporting: {
-      frequency: "",
     },
   });
 
-  const updateData = <K extends keyof OnboardingData>(
+  type NestedSection = Exclude<keyof OnboardingData, "accountType">;
+
+  const updateData = <K extends NestedSection>(
     section: K,
     values: Partial<OnboardingData[K]>
   ) => {
@@ -124,7 +90,7 @@ export function OnboardingFlow() {
 
   const next = () => {
     setDirection(1);
-    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    setStep((s) => Math.min(s + 1, ORG_STEPS.length - 1));
   };
 
   const back = () => {
@@ -148,15 +114,18 @@ export function OnboardingFlow() {
     return <StepWelcome onNext={next} />;
   }
 
+  // Nav steps = steps 1 through 3 (exclude welcome and complete)
+  const navSteps = ORG_STEPS.slice(1, -1);
+
   return (
     <div className="min-h-screen bg-[#FAF9F8] flex flex-col">
       {/* Top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-border">
         <Image src="/logo.svg" alt="Good2Give" width={120} height={36} priority />
 
-        {step < STEPS.length - 1 && (
+        {step < ORG_STEPS.length - 1 && (
           <div className="hidden sm:flex items-center gap-6">
-            {STEPS.slice(1, -1).map((s, i) => (
+            {navSteps.map((s, i) => (
               <div
                 key={s.id}
                 className={`flex items-center gap-1.5 text-base transition-colors ${
@@ -185,13 +154,13 @@ export function OnboardingFlow() {
         )}
 
         <div className="text-base text-muted-foreground">
-          {step < STEPS.length - 1 && (
+          {step < ORG_STEPS.length - 1 && (
             <span>Step {step} of {TOTAL_STEPS - 1}</span>
           )}
         </div>
       </header>
 
-      {step < STEPS.length - 1 && (
+      {step < ORG_STEPS.length - 1 && (
         <div className="sticky top-[65px] z-30">
           <Progress value={progressPercent} className="h-0.5 rounded-none bg-border" />
         </div>
@@ -210,6 +179,14 @@ export function OnboardingFlow() {
             className="w-full max-w-2xl"
           >
             {step === 1 && (
+              <StepAccountType
+                selected={data.accountType}
+                onSelect={(type) => setData((prev) => ({ ...prev, accountType: type }))}
+                onNext={next}
+                onBack={back}
+              />
+            )}
+            {step === 2 && (
               <StepCompany
                 data={data.company}
                 onChange={(v) => updateData("company", v)}
@@ -217,23 +194,7 @@ export function OnboardingFlow() {
                 onBack={back}
               />
             )}
-            {step === 2 && (
-              <StepBanking
-                data={data.banking}
-                onChange={(v) => updateData("banking", v)}
-                onNext={next}
-                onBack={back}
-              />
-            )}
             {step === 3 && (
-              <StepGivingRules
-                data={data.givingRules}
-                onChange={(v) => updateData("givingRules", v)}
-                onNext={next}
-                onBack={back}
-              />
-            )}
-            {step === 4 && (
               <StepTrustee
                 data={data.trustee}
                 onChange={(v) => updateData("trustee", v)}
@@ -241,15 +202,7 @@ export function OnboardingFlow() {
                 onBack={back}
               />
             )}
-            {step === 5 && (
-              <StepReporting
-                data={data.reporting}
-                onChange={(v) => updateData("reporting", v)}
-                onNext={next}
-                onBack={back}
-              />
-            )}
-            {step === 6 && <StepComplete data={data} onFinish={finish} />}
+            {step === 4 && <StepComplete data={data} onFinish={finish} />}
           </motion.div>
         </AnimatePresence>
       </main>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, Building2, Landmark, ShieldCheck, Users, FolderSync } from "lucide-react";
+import { CheckCircle2, ArrowRight, Building2, Landmark, Users, Clock } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -19,28 +19,25 @@ export function StepComplete({ data, onFinish }: Props) {
   const steps = [
     {
       icon: Building2,
-      label: "Organisation profile created",
-      sub: `${data.company.name} · ABN ${data.company.abn}`,
-    },
-    {
-      icon: Landmark,
-      label: "Banking details submitted",
-      sub: `${data.banking.accountName} · BSB ${data.banking.bsb} · ${data.banking.givingPercentage}% giving rate`,
-    },
-    {
-      icon: ShieldCheck,
-      label: "Compliance & charities submitted",
-      sub: `Good2Give foundation · ${data.givingRules.charities.length} ${data.givingRules.charities.length === 1 ? "charity" : "charities"}`,
+      label: "Organisation profile submitted",
+      sub: `${data.company.name || "Your organisation"} · ABN ${data.company.abn || "—"}`,
     },
     {
       icon: Users,
-      label: "Authorised users configured",
-      sub: `${data.trustee.firstName} ${data.trustee.lastName} (Founder)${data.trustee.additionalUsers.length > 0 ? ` + ${data.trustee.additionalUsers.length} additional` : ""}`,
+      label: "Trustee details recorded",
+      sub: `${data.trustee.firstName} ${data.trustee.lastName} · ${data.trustee.role || "Trustee"}`,
     },
     {
-      icon: FolderSync,
-      label: "Reporting schedule set",
-      sub: `${data.reporting.frequency.charAt(0).toUpperCase() + data.reporting.frequency.slice(1)} SFTP uploads`,
+      icon: Landmark,
+      label: data.banking.skipped ? "Bank details — to be added after approval" : "Bank details submitted",
+      sub: data.banking.skipped
+        ? "You can add these once your account is approved"
+        : `Account: ${data.banking.accountName} · BSB ${data.banking.bsb}`,
+    },
+    {
+      icon: Clock,
+      label: "Awaiting G2G review",
+      sub: "G2G staff will verify your documents and approve your Foundation Account",
     },
   ];
 
@@ -51,6 +48,7 @@ export function StepComplete({ data, onFinish }: Props) {
         setChecked((c) => [...c, i]);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -68,7 +66,7 @@ export function StepComplete({ data, onFinish }: Props) {
       <div className="space-y-3">
         <h2 className="text-3xl font-bold text-foreground">Application submitted!</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Your Foundation Account application is under review. Here's a summary of what we've received.
+          Your Foundation Account application has been sent to G2G for review. Here&apos;s a summary of what we&apos;ve received.
         </p>
       </div>
 
@@ -104,6 +102,25 @@ export function StepComplete({ data, onFinish }: Props) {
         ))}
       </div>
 
+      {/* What happens next */}
+      <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 text-left space-y-2">
+        <p className="text-sm font-semibold text-amber-900">What happens next?</p>
+        <ul className="text-sm text-amber-800 space-y-1.5">
+          <li className="flex items-start gap-2">
+            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+            G2G staff will review and validate your organisation documents
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+            Once approved, your Foundation Sub-Account will be automatically created
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+            You&apos;ll receive a welcome email with access to your Foundation Dashboard
+          </li>
+        </ul>
+      </div>
+
       <div className="flex flex-col items-center gap-3">
         <Button
           size="lg"
@@ -113,7 +130,7 @@ export function StepComplete({ data, onFinish }: Props) {
           Go to Dashboard <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
         <p className="text-sm text-muted-foreground">
-          Our team will review your application and send SFTP credentials within 1–2 business days.
+          Our team will review your application within 1–2 business days.
         </p>
       </div>
     </div>

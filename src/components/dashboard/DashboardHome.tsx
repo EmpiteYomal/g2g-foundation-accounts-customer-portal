@@ -13,7 +13,7 @@ export function DashboardHome() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Good morning, Jane</h1>
         <p className="text-muted-foreground text-sm mt-0.5">
-          Here&apos;s your Foundation Account overview for{" "}
+          Here&apos;s your KFC Foundation Account overview for{" "}
           <span className="font-medium text-foreground">April 2026</span>.
         </p>
       </div>

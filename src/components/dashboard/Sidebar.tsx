@@ -3,15 +3,14 @@
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
-  ArrowUpFromLine,
   Heart,
   FileText,
-  Settings,
   HelpCircle,
   X,
-  SlidersHorizontal,
-  Bell,
   Users,
+  Wallet,
+  HandCoins,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -21,29 +20,32 @@ const navItems = [
     section: "Overview",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/dashboard/configuration", label: "Configuration", icon: SlidersHorizontal },
+    ],
+  },
+  {
+    section: "Foundation Account",
+    items: [
+      { href: "/dashboard/balance", label: "Account Balance", icon: Wallet },
     ],
   },
   {
     section: "Giving",
     items: [
-      { href: "/dashboard/transactions", label: "Transactions", icon: ArrowUpFromLine, badge: "12" },
-      { href: "/dashboard/approvals", label: "Approvals", icon: Heart, badge: "3" },
+      { href: "/dashboard/disbursements", label: "My Givings", icon: HandCoins, badge: "3" },
+      { href: "/dashboard/charities", label: "My Charities", icon: Heart },
     ],
   },
   {
     section: "Organisation",
     items: [
-      { href: "/dashboard/charities", label: "Charities", icon: Heart },
       { href: "/dashboard/team", label: "Team & Trustees", icon: Users },
-      { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
       { href: "/dashboard/reports", label: "Reports", icon: FileText },
+      { href: "/dashboard/settings", label: "Settings", icon: Settings },
     ],
   },
 ];
 
 const bottomItems = [
-  { href: "/dashboard/settings", label: "Settings", icon: Settings },
   { href: "/dashboard/support", label: "Help & Support", icon: HelpCircle },
 ];
 
@@ -60,7 +62,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       {/* Logo */}
       <div className="px-4 mb-6 flex items-center justify-between">
         <div className="flex items-center">
-          <img src="/logo.svg" alt="Good2Give" className="h-14 w-auto" />
+          <img src="/logo.svg" alt="Good2Give" className="h-9 w-auto" />
         </div>
         <button
           onClick={onClose}

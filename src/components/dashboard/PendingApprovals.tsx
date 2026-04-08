@@ -23,6 +23,7 @@ const approvals = [
     period: "March 2026",
     givingRate: "1%",
     charityShare: "60%",
+    givingId: "GIVING-221",
     dueDate: "Due today",
     urgent: true,
   },
@@ -33,6 +34,7 @@ const approvals = [
     period: "March 2026",
     givingRate: "1%",
     charityShare: "40%",
+    givingId: "GIVING-221",
     dueDate: "Due today",
     urgent: true,
   },
@@ -43,6 +45,7 @@ const approvals = [
     period: "February 2026",
     givingRate: "1%",
     charityShare: "100%",
+    givingId: "GIVING-208",
     dueDate: "Due Apr 10",
     urgent: false,
   },
@@ -123,12 +126,8 @@ export function PendingApprovals() {
                 )}
               </div>
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-xs font-medium text-foreground bg-muted px-2 py-0.5 rounded-full">
-                  {item.givingRate} of sales
-                </span>
-                <span className="text-xs text-muted-foreground">→</span>
                 <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
-                  {item.charityShare} to this charity
+                  {item.charityShare} · {item.givingId}
                 </span>
                 <span className="text-xs text-muted-foreground">· {item.period}</span>
               </div>

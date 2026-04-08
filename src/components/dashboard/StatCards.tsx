@@ -1,23 +1,33 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { DollarSign, Clock, CalendarDays, Percent } from "lucide-react";
+import { Wallet, TrendingUp, Clock, CreditCard } from "lucide-react";
 
 const stats = [
   {
-    label: "Total Donated",
+    label: "Available Balance",
     value: "$48,392",
-    sub: "+$3,210 this month",
-    trend: "+7.1%",
+    sub: "Foundation account balance",
+    trend: "+$3,210 this month",
     positive: true,
-    icon: DollarSign,
+    icon: Wallet,
     color: "text-violet-600",
     bg: "bg-violet-50",
   },
   {
-    label: "Pending Approval",
+    label: "Monthly Donations",
+    value: "$3,210",
+    sub: "vs $2,990 last month",
+    trend: "+7.4%",
+    positive: true,
+    icon: TrendingUp,
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+  },
+  {
+    label: "Pending Disbursements",
     value: "$6,840",
-    sub: "3 transfers awaiting",
+    sub: "3 awaiting processing",
     trend: "Action needed",
     positive: false,
     icon: Clock,
@@ -26,22 +36,12 @@ const stats = [
     urgent: true,
   },
   {
-    label: "This Month",
-    value: "$3,210",
-    sub: "vs $2,990 last month",
-    trend: "+7.4%",
+    label: "Contribution Methods",
+    value: "2 Active",
+    sub: "Bank transfer · Cards",
+    trend: "Configure more",
     positive: true,
-    icon: CalendarDays,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
-  },
-  {
-    label: "Giving Rate",
-    value: "1%",
-    sub: "Across 2 charities",
-    trend: "of every sale",
-    positive: true,
-    icon: Percent,
+    icon: CreditCard,
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
@@ -56,9 +56,7 @@ export function StatCards() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.08 }}
-          className={`bg-white rounded-2xl p-5 border transition-shadow ${
-            "border-border"
-          }`}
+          className="bg-white rounded-2xl p-5 border border-border transition-shadow"
         >
           <div className="flex items-start justify-between mb-3">
             <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
