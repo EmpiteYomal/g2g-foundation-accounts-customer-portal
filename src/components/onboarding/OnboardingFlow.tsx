@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { StepWelcome } from "./steps/StepWelcome";
 import { StepCompany } from "./steps/StepCompany";
-import { StepIntegration } from "./steps/StepIntegration";
+import { StepBanking } from "./steps/StepBanking";
 import { StepGivingRules } from "./steps/StepGivingRules";
 import { StepTrustee } from "./steps/StepTrustee";
+import { StepReporting } from "./steps/StepReporting";
 import { StepComplete } from "./steps/StepComplete";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
@@ -19,16 +20,23 @@ export type OnboardingData = {
     industry: string;
     size: string;
     website: string;
+    address: string;
+    suburb: string;
+    state: string;
+    postcode: string;
+    logoFileName: string;
   };
-  integration: {
-    posSystem: string;
-    apiKey: string;
-    roundupEnabled: boolean;
-    percentageEnabled: boolean;
-    percentage: string;
+  banking: {
+    accountName: string;
+    bsb: string;
+    accountNumber: string;
+    bankDocFileName: string;
+    givingPercentage: string;
+    financeContactName: string;
+    financeContactEmail: string;
   };
   givingRules: {
-    frequency: string;
+    founderDeclared: boolean;
     charities: { name: string; allocation: number }[];
   };
   trustee: {
@@ -37,24 +45,22 @@ export type OnboardingData = {
     email: string;
     phone: string;
     role: string;
+    dateOfBirth: string;
+    additionalUsers: { name: string; position: string; email: string }[];
   };
-};
-
-export type SignupData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  company: string;
+  reporting: {
+    frequency: string;
+  };
 };
 
 const STEPS = [
   { id: 0, label: "Welcome" },
-  { id: 1, label: "Company" },
-  { id: 2, label: "Integration" },
-  { id: 3, label: "Giving Rules" },
-  { id: 4, label: "Trustee" },
-  { id: 5, label: "Complete" },
+  { id: 1, label: "Organisation" },
+  { id: 2, label: "Banking" },
+  { id: 3, label: "Compliance" },
+  { id: 4, label: "Users" },
+  { id: 5, label: "Reporting" },
+  { id: 6, label: "Complete" },
 ];
 
 const TOTAL_STEPS = STEPS.length - 1;
@@ -64,25 +70,52 @@ export function OnboardingFlow() {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [data, setData] = useState<OnboardingData>({
-    company: { name: "", abn: "", industry: "", size: "", website: "" },
-    integration: {
-      posSystem: "",
-      apiKey: "",
-      roundupEnabled: true,
-      percentageEnabled: false,
-      percentage: "1",
+    company: {
+      name: "",
+      abn: "",
+      industry: "",
+      size: "",
+      website: "",
+      address: "",
+      suburb: "",
+      state: "",
+      postcode: "",
+      logoFileName: "",
+    },
+    banking: {
+      accountName: "",
+      bsb: "",
+      accountNumber: "",
+      bankDocFileName: "",
+      givingPercentage: "1",
+      financeContactName: "",
+      financeContactEmail: "",
     },
     givingRules: {
-      frequency: "weekly",
+      founderDeclared: false,
       charities: [
         { name: "Red Cross Australia", allocation: 60 },
         { name: "Salvation Army", allocation: 40 },
       ],
     },
-    trustee: { firstName: "", lastName: "", email: "", phone: "", role: "" },
+    trustee: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      role: "",
+      dateOfBirth: "",
+      additionalUsers: [],
+    },
+    reporting: {
+      frequency: "",
+    },
   });
 
-  const updateData = (section: keyof OnboardingData, values: Partial<OnboardingData[keyof OnboardingData]>) => {
+  const updateData = <K extends keyof OnboardingData>(
+    section: K,
+    values: Partial<OnboardingData[K]>
+  ) => {
     setData((prev) => ({
       ...prev,
       [section]: { ...prev[section], ...values },
@@ -111,7 +144,6 @@ export function OnboardingFlow() {
     exit: (dir: number) => ({ x: dir > 0 ? -60 : 60, opacity: 0 }),
   };
 
-  // Step 0 gets its own full-screen split layout
   if (step === 0) {
     return <StepWelcome onNext={next} />;
   }
@@ -119,7 +151,7 @@ export function OnboardingFlow() {
   return (
     <div className="min-h-screen bg-[#FAF9F8] flex flex-col">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-border">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-border">
         <Image src="/logo.svg" alt="Good2Give" width={120} height={36} priority />
 
         {step < STEPS.length - 1 && (
@@ -160,7 +192,9 @@ export function OnboardingFlow() {
       </header>
 
       {step < STEPS.length - 1 && (
-        <Progress value={progressPercent} className="h-0.5 rounded-none bg-border" />
+        <div className="sticky top-[65px] z-30">
+          <Progress value={progressPercent} className="h-0.5 rounded-none bg-border" />
+        </div>
       )}
 
       <main className="flex-1 flex items-center justify-center p-4 sm:p-8">
@@ -184,9 +218,9 @@ export function OnboardingFlow() {
               />
             )}
             {step === 2 && (
-              <StepIntegration
-                data={data.integration}
-                onChange={(v) => updateData("integration", v)}
+              <StepBanking
+                data={data.banking}
+                onChange={(v) => updateData("banking", v)}
                 onNext={next}
                 onBack={back}
               />
@@ -207,7 +241,15 @@ export function OnboardingFlow() {
                 onBack={back}
               />
             )}
-            {step === 5 && <StepComplete data={data} onFinish={finish} />}
+            {step === 5 && (
+              <StepReporting
+                data={data.reporting}
+                onChange={(v) => updateData("reporting", v)}
+                onNext={next}
+                onBack={back}
+              />
+            )}
+            {step === 6 && <StepComplete data={data} onFinish={finish} />}
           </motion.div>
         </AnimatePresence>
       </main>

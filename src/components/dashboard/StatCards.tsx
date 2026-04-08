@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { DollarSign, Clock, TrendingUp, GitBranch } from "lucide-react";
+import { DollarSign, Clock, CalendarDays, Percent } from "lucide-react";
 
 const stats = [
   {
@@ -31,17 +31,17 @@ const stats = [
     sub: "vs $2,990 last month",
     trend: "+7.4%",
     positive: true,
-    icon: TrendingUp,
+    icon: CalendarDays,
     color: "text-emerald-600",
     bg: "bg-emerald-50",
   },
   {
-    label: "Active Rules",
-    value: "4",
-    sub: "Across 6 charities",
-    trend: "All healthy",
+    label: "Giving Rate",
+    value: "1%",
+    sub: "Across 2 charities",
+    trend: "of every sale",
     positive: true,
-    icon: GitBranch,
+    icon: Percent,
     color: "text-blue-600",
     bg: "bg-blue-50",
   },
@@ -56,7 +56,7 @@ export function StatCards() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.08 }}
-          className={`bg-white rounded-2xl p-5 border shadow-sm hover:shadow-md transition-shadow ${
+          className={`bg-white rounded-2xl p-5 border transition-shadow ${
             "border-border"
           }`}
         >

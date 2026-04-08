@@ -1,7 +1,6 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp } from "lucide-react";
 
 const charityBreakdown = [
   { name: "Red Cross Australia", amount: "$29,035", pct: 60, color: "#16a34a" },
@@ -12,14 +11,9 @@ const charityBreakdown = [
 
 export function ImpactSummary() {
   return (
-    <Card className="rounded-2xl border-border shadow-sm">
+    <Card className="rounded-2xl border-border">
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-            <TrendingUp className="w-3.5 h-3.5 text-emerald-800" />
-          </div>
-          <CardTitle className="text-sm font-semibold">Impact Summary</CardTitle>
-        </div>
+        <CardTitle className="text-sm font-semibold">Impact Summary</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 pt-0">
         {/* Big number */}

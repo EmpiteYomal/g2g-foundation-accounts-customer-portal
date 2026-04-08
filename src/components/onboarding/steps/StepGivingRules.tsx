@@ -1,17 +1,10 @@
 "use client";
 
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowRight, ArrowLeft, Heart, Plus, Trash2, AlertCircle } from "lucide-react";
+import { ArrowRight, ArrowLeft, ShieldCheck, Plus, Trash2, AlertCircle, Info, Search, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { OnboardingData } from "../OnboardingFlow";
 
@@ -22,25 +15,136 @@ type Props = {
   onBack: () => void;
 };
 
-const frequencies = [
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
-  { value: "fortnightly", label: "Fortnightly" },
-  { value: "monthly", label: "Monthly" },
-];
-
-const suggestedCharities = [
-  "Red Cross Australia",
+const CHARITIES = [
+  "Australian Red Cross",
   "Salvation Army",
   "Beyond Blue",
-  "Cancer Council",
+  "Cancer Council Australia",
   "Oxfam Australia",
-  "RSPCA",
+  "RSPCA Australia",
+  "Lifeline Australia",
+  "The Smith Family",
+  "Médecins Sans Frontières",
+  "World Vision Australia",
+  "St Vincent de Paul Society",
+  "Mission Australia",
+  "Foodbank Australia",
+  "Anglicare Australia",
+  "Care Australia",
+  "Amnesty International Australia",
+  "Cerebral Palsy Alliance",
+  "Guide Dogs Australia",
+  "Hearing Australia",
+  "Heart Foundation",
+  "Kids Under Cover",
+  "Leukaemia Foundation",
+  "Make-A-Wish Australia",
+  "Mater Foundation",
+  "Peter MacCallum Cancer Centre",
+  "Royal Flying Doctor Service",
+  "Save the Children Australia",
+  "Starlight Children's Foundation",
+  "The Fred Hollows Foundation",
+  "Variety Australia",
 ];
+
+type CharityComboboxProps = {
+  value: string;
+  onChange: (v: string) => void;
+  usedCharities: string[];
+};
+
+function CharityCombobox({ value, onChange, usedCharities }: CharityComboboxProps) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const filtered = CHARITIES.filter(
+    (c) =>
+      c.toLowerCase().includes(search.toLowerCase()) &&
+      (c === value || !usedCharities.includes(c))
+  );
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 0);
+    } else {
+      setSearch("");
+    }
+  }, [open]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative flex-1">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className={cn(
+          "w-full h-10 px-3 rounded-xl border text-sm text-left flex items-center justify-between gap-2 transition-colors",
+          open ? "border-primary ring-1 ring-primary" : "border-input hover:border-primary/40",
+          !value && "text-muted-foreground"
+        )}
+      >
+        <span className="truncate">{value || "Search charity…"}</span>
+        <ChevronDown className={cn("w-4 h-4 text-muted-foreground flex-shrink-0 transition-transform", open && "rotate-180")} />
+      </button>
+
+      {open && (
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-border bg-white shadow-lg overflow-hidden">
+          {/* Search input */}
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
+            <Search className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+            <input
+              ref={inputRef}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Type to search…"
+              className="flex-1 text-sm outline-none bg-transparent placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {/* Results */}
+          <div className="max-h-48 overflow-y-auto py-1">
+            {filtered.length === 0 ? (
+              <p className="px-3 py-2 text-sm text-muted-foreground">No charities found.</p>
+            ) : (
+              filtered.map((charity) => (
+                <button
+                  key={charity}
+                  type="button"
+                  onClick={() => {
+                    onChange(charity);
+                    setOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm text-left hover:bg-primary/5 transition-colors"
+                >
+                  <span>{charity}</span>
+                  {charity === value && <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />}
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
   const totalAllocation = data.charities.reduce((sum, c) => sum + c.allocation, 0);
-  const isValid = data.charities.length > 0 && totalAllocation === 100;
+  const isValid = data.founderDeclared && data.charities.length > 0 && totalAllocation === 100;
+
+  const usedCharities = data.charities.map((c) => c.name);
 
   const updateCharity = (index: number, field: "name" | "allocation", value: string | number) => {
     const updated = data.charities.map((c, i) =>
@@ -66,43 +170,34 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
     <div className="bg-white rounded-3xl border border-border shadow-sm p-8 sm:p-10 space-y-8">
       <div className="space-y-2">
         <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-          <Heart className="w-6 h-6 text-primary" />
+          <ShieldCheck className="w-6 h-6 text-primary" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground">Set giving rules</h2>
+        <h2 className="text-2xl font-bold text-foreground">Compliance & charities</h2>
         <p className="text-muted-foreground">
-          Define how and when funds are distributed to your chosen charities.
+          Choose which charities receive your donations and declare your account authority.
         </p>
       </div>
 
-      <div className="space-y-6">
-        {/* Frequency */}
-        <div className="space-y-1.5">
-          <Label>Distribution frequency</Label>
-          <div className="flex flex-wrap gap-2">
-            {frequencies.map((f) => (
-              <button
-                key={f.value}
-                type="button"
-                onClick={() => onChange({ frequency: f.value })}
-                className={cn(
-                  "px-4 py-2 rounded-full text-base font-medium border transition-all",
-                  data.frequency === f.value
-                    ? "bg-primary text-white border-primary shadow-sm shadow-primary/20"
-                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
-                )}
-              >
-                {f.label}
-              </button>
-            ))}
+      <div className="space-y-7">
+        {/* G2G as foundation explainer */}
+        <div className="flex items-start gap-3 p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
+          <Info className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <p className="text-sm font-semibold text-blue-900">Good2Give holds your funds</p>
+            <p className="text-xs text-blue-800 leading-relaxed">
+              Good2Give acts as the DGR-endorsed giving vehicle for your Foundation Account. Donated funds are held securely by Good2Give and disbursed to your chosen charities according to the allocation below.
+            </p>
           </div>
         </div>
 
         {/* Charity allocation */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label>Charity allocation</Label>
+            <Label className="text-sm font-semibold text-foreground">
+              Charity allocation <span className="text-primary">*</span>
+            </Label>
             <div className={cn(
-              "flex items-center gap-1.5 text-base font-medium px-3 py-1 rounded-full transition-colors",
+              "flex items-center gap-1.5 text-xs font-medium px-3 py-1 rounded-full transition-colors",
               totalAllocation === 100
                 ? "bg-green-50 text-green-700"
                 : totalAllocation > 100
@@ -113,6 +208,9 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
               {totalAllocation}% allocated
             </div>
           </div>
+          <p className="text-xs text-muted-foreground -mt-1">
+            All charities must hold DGR-1 or DGR-2 status. Allocations must total 100%.
+          </p>
 
           {/* Allocation bar */}
           <div className="h-2 bg-muted rounded-full overflow-hidden flex gap-0.5">
@@ -131,18 +229,11 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
           <div className="space-y-2.5">
             {data.charities.map((charity, i) => (
               <div key={i} className="flex items-center gap-2">
-                <div className="flex-1">
-                  <Select value={charity.name} onValueChange={(v) => updateCharity(i, "name", v ?? "")}>
-                    <SelectTrigger className="h-10 rounded-xl text-base">
-                      <SelectValue placeholder="Select a charity" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {suggestedCharities.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <CharityCombobox
+                  value={charity.name}
+                  onChange={(v) => updateCharity(i, "name", v)}
+                  usedCharities={usedCharities}
+                />
                 <div className="relative w-24">
                   <Input
                     type="number"
@@ -150,9 +241,9 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
                     max="100"
                     value={charity.allocation}
                     onChange={(e) => updateCharity(i, "allocation", Number(e.target.value))}
-                    className="h-10 rounded-xl pr-6 text-base text-center"
+                    className="h-10 rounded-xl pr-6 text-sm text-center"
                   />
-                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-base">%</span>
+                  <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
                 </div>
                 <button
                   type="button"
@@ -169,18 +260,48 @@ export function StepGivingRules({ data, onChange, onNext, onBack }: Props) {
             <button
               type="button"
               onClick={addCharity}
-              className="flex items-center gap-2 text-base text-primary hover:text-primary/80 font-medium transition-colors"
+              className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
             >
               <Plus className="w-4 h-4" /> Add charity
             </button>
           )}
 
           {totalAllocation !== 100 && data.charities.length > 0 && (
-            <p className="text-base text-amber-600 flex items-center gap-1.5">
+            <p className="text-xs text-amber-600 flex items-center gap-1.5">
               <AlertCircle className="w-3 h-3" />
               Allocations must total exactly 100% to continue.
             </p>
           )}
+        </div>
+
+        {/* Account Founder Declaration */}
+        <div
+          className={cn(
+            "flex items-start gap-3 p-4 rounded-2xl border-2 transition-colors cursor-pointer",
+            data.founderDeclared
+              ? "border-primary bg-primary/5"
+              : "border-border hover:border-primary/30"
+          )}
+          onClick={() => onChange({ founderDeclared: !data.founderDeclared })}
+        >
+          <div className={cn(
+            "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 mt-0.5 transition-colors",
+            data.founderDeclared ? "bg-primary border-primary" : "border-border"
+          )}>
+            {data.founderDeclared && (
+              <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              Account Founder Declaration <span className="text-primary">*</span>
+            </p>
+            <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+              I confirm I am over 18 years of age and legally authorised to establish this Foundation Account on behalf of the organisation.
+            </p>
+          </div>
         </div>
       </div>
 

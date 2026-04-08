@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   ArrowUpFromLine,
-  Shield,
   Heart,
   FileText,
   Settings,
@@ -29,7 +28,6 @@ const navItems = [
     section: "Giving",
     items: [
       { href: "/dashboard/transactions", label: "Transactions", icon: ArrowUpFromLine, badge: "12" },
-      { href: "/dashboard/rules", label: "Giving Rules", icon: Shield },
       { href: "/dashboard/approvals", label: "Approvals", icon: Heart, badge: "3" },
     ],
   },
@@ -70,13 +68,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         >
           <X className="w-4 h-4" />
         </button>
-      </div>
-
-      {/* Account pill */}
-      <div className="mx-3 mb-5 px-3 py-2.5 rounded-xl bg-primary/6 border border-primary/12">
-        <p className="text-primary/60 text-xs font-medium uppercase tracking-wider mb-0.5">Current Account</p>
-        <p className="text-foreground text-sm font-semibold leading-tight truncate">KFC Australia Pty Ltd</p>
-        <p className="text-muted-foreground text-xs">ABN 51 004 220 518</p>
       </div>
 
       {/* Nav items */}

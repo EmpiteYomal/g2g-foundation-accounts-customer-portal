@@ -2,7 +2,7 @@
 
 import { StatCards } from "./StatCards";
 import { RecentTransactions } from "./RecentTransactions";
-import { GivingRulesPanel } from "./GivingRulesPanel";
+import { GivingRatePanel } from "./GivingRatePanel";
 import { PendingApprovals } from "./PendingApprovals";
 import { ImpactSummary } from "./ImpactSummary";
 
@@ -30,9 +30,11 @@ export function DashboardHome() {
         </div>
 
         {/* Right column — 1/3 */}
-        <div className="space-y-6">
+        <div className="flex flex-col gap-6">
           <ImpactSummary />
-          <GivingRulesPanel />
+          <div className="flex-1 flex flex-col">
+            <GivingRatePanel />
+          </div>
         </div>
       </div>
     </div>

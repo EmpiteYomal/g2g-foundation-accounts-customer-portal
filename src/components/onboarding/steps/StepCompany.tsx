@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowRight, ArrowLeft, Building2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, Building2, Upload, ImageIcon } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -40,8 +41,19 @@ const sizes = [
   "1,000+ employees",
 ];
 
+const australianStates = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
+
 export function StepCompany({ data, onChange, onNext, onBack }: Props) {
-  const isValid = data.name.trim() && data.abn.trim() && data.industry && data.size;
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const isValid =
+    data.name.trim() &&
+    data.abn.trim() &&
+    data.industry &&
+    data.size &&
+    data.address.trim() &&
+    data.suburb.trim() &&
+    data.state &&
+    data.postcode.trim();
 
   return (
     <div className="bg-white rounded-3xl border border-border shadow-sm p-8 sm:p-10 space-y-8">
@@ -57,66 +69,169 @@ export function StepCompany({ data, onChange, onNext, onBack }: Props) {
       </div>
 
       {/* Form */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        <div className="sm:col-span-2 space-y-1.5">
-          <Label htmlFor="name">Business name <span className="text-primary">*</span></Label>
-          <Input
-            id="name"
-            placeholder="e.g. KFC Australia Pty Ltd"
-            value={data.name}
-            onChange={(e) => onChange({ name: e.target.value })}
-            className="h-11 rounded-xl"
+      <div className="space-y-6">
+        {/* Legal entity */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div className="sm:col-span-2 space-y-1.5">
+            <Label htmlFor="name">
+              Legal entity name <span className="text-primary">*</span>
+            </Label>
+            <Input
+              id="name"
+              placeholder="e.g. KFC Australia Pty Ltd"
+              value={data.name}
+              onChange={(e) => onChange({ name: e.target.value })}
+              className="h-11 rounded-xl"
+            />
+            <p className="text-xs text-muted-foreground">
+              Must match the name registered with your ABN.
+            </p>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="abn">
+              ABN / ACN <span className="text-primary">*</span>
+            </Label>
+            <Input
+              id="abn"
+              placeholder="51 004 220 518"
+              value={data.abn}
+              onChange={(e) => onChange({ abn: e.target.value })}
+              className="h-11 rounded-xl"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="website">Website</Label>
+            <Input
+              id="website"
+              placeholder="https://yourcompany.com.au"
+              value={data.website}
+              onChange={(e) => onChange({ website: e.target.value })}
+              className="h-11 rounded-xl"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Industry <span className="text-primary">*</span></Label>
+            <Select value={data.industry || undefined} onValueChange={(v) => onChange({ industry: v ?? "" })}>
+              <SelectTrigger className="h-11 rounded-xl">
+                <SelectValue placeholder="Select your industry" />
+              </SelectTrigger>
+              <SelectContent>
+                {industries.map((i) => (
+                  <SelectItem key={i} value={i}>{i}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Organisation size <span className="text-primary">*</span></Label>
+            <Select value={data.size || undefined} onValueChange={(v) => onChange({ size: v ?? "" })}>
+              <SelectTrigger className="h-11 rounded-xl">
+                <SelectValue placeholder="Select size" />
+              </SelectTrigger>
+              <SelectContent>
+                {sizes.map((s) => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Corporate address */}
+        <div className="space-y-3">
+          <Label className="text-sm font-semibold text-foreground">
+            Corporate address <span className="text-primary">*</span>
+          </Label>
+          <p className="text-xs text-muted-foreground -mt-1">
+            Australian head office for formal correspondence.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2 space-y-1.5">
+              <Label htmlFor="address" className="text-xs text-muted-foreground">Street address</Label>
+              <Input
+                id="address"
+                placeholder="Level 10, 1 Collins Street"
+                value={data.address}
+                onChange={(e) => onChange({ address: e.target.value })}
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="suburb" className="text-xs text-muted-foreground">Suburb / City</Label>
+              <Input
+                id="suburb"
+                placeholder="Melbourne"
+                value={data.suburb}
+                onChange={(e) => onChange({ suburb: e.target.value })}
+                className="h-11 rounded-xl"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">State</Label>
+                <Select value={data.state || undefined} onValueChange={(v) => onChange({ state: v ?? "" })}>
+                  <SelectTrigger className="h-11 rounded-xl">
+                    <SelectValue placeholder="State" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {australianStates.map((s) => (
+                      <SelectItem key={s} value={s}>{s}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="postcode" className="text-xs text-muted-foreground">Postcode</Label>
+                <Input
+                  id="postcode"
+                  placeholder="3000"
+                  maxLength={4}
+                  value={data.postcode}
+                  onChange={(e) => onChange({ postcode: e.target.value.replace(/\D/g, "") })}
+                  className="h-11 rounded-xl"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Branding */}
+        <div className="space-y-2">
+          <Label className="text-sm font-semibold text-foreground">Branding assets</Label>
+          <p className="text-xs text-muted-foreground">
+            High-resolution logo to brand your giving portal. PNG or SVG preferred.
+          </p>
+          <input
+            ref={logoInputRef}
+            type="file"
+            accept="image/png,image/svg+xml,image/jpeg"
+            className="hidden"
+            onChange={(e) => onChange({ logoFileName: e.target.files?.[0]?.name ?? "" })}
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="abn">ABN <span className="text-primary">*</span></Label>
-          <Input
-            id="abn"
-            placeholder="12 345 678 901"
-            value={data.abn}
-            onChange={(e) => onChange({ abn: e.target.value })}
-            className="h-11 rounded-xl"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="website">Website</Label>
-          <Input
-            id="website"
-            placeholder="https://yourcompany.com.au"
-            value={data.website}
-            onChange={(e) => onChange({ website: e.target.value })}
-            className="h-11 rounded-xl"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Industry <span className="text-primary">*</span></Label>
-          <Select value={data.industry || undefined} onValueChange={(v) => onChange({ industry: v ?? "" })}>
-            <SelectTrigger className="h-11 rounded-xl">
-              <SelectValue placeholder="Select your industry" />
-            </SelectTrigger>
-            <SelectContent>
-              {industries.map((i) => (
-                <SelectItem key={i} value={i}>{i}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Organisation size <span className="text-primary">*</span></Label>
-          <Select value={data.size || undefined} onValueChange={(v) => onChange({ size: v ?? "" })}>
-            <SelectTrigger className="h-11 rounded-xl">
-              <SelectValue placeholder="Select size" />
-            </SelectTrigger>
-            <SelectContent>
-              {sizes.map((s) => (
-                <SelectItem key={s} value={s}>{s}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <button
+            type="button"
+            onClick={() => logoInputRef.current?.click()}
+            className="w-full h-20 rounded-xl border-2 border-dashed border-border hover:border-primary/40 hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1.5 group"
+          >
+            {data.logoFileName ? (
+              <>
+                <ImageIcon className="w-5 h-5 text-primary" />
+                <span className="text-sm font-medium text-foreground">{data.logoFileName}</span>
+                <span className="text-xs text-muted-foreground">Click to replace</span>
+              </>
+            ) : (
+              <>
+                <Upload className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Upload logo
+                </span>
+              </>
+            )}
+          </button>
         </div>
       </div>
 

@@ -13,7 +13,8 @@ const approvals = [
     charity: "Red Cross Australia",
     amount: "$2,904.00",
     period: "March 2026",
-    rule: "Weekly distribution · 60%",
+    givingRate: "1%",
+    charityShare: "60%",
     dueDate: "Due today",
     urgent: true,
   },
@@ -22,7 +23,8 @@ const approvals = [
     charity: "Salvation Army",
     amount: "$1,936.00",
     period: "March 2026",
-    rule: "Weekly distribution · 40%",
+    givingRate: "1%",
+    charityShare: "40%",
     dueDate: "Due today",
     urgent: true,
   },
@@ -30,8 +32,9 @@ const approvals = [
     id: "AP-2403",
     charity: "Beyond Blue",
     amount: "$2,000.00",
-    period: "Q1 Bonus",
-    rule: "Manual disbursement",
+    period: "February 2026",
+    givingRate: "1%",
+    charityShare: "100%",
     dueDate: "Due Apr 10",
     urgent: false,
   },
@@ -56,7 +59,7 @@ export function PendingApprovals() {
 
   if (items.length === 0) {
     return (
-      <Card className="rounded-2xl border-border shadow-sm">
+      <Card className="rounded-2xl border-border">
         <CardContent className="flex flex-col items-center justify-center py-10 text-center gap-3">
           <CheckCircle2 className="w-10 h-10 text-emerald-500" />
           <div>
@@ -69,7 +72,7 @@ export function PendingApprovals() {
   }
 
   return (
-    <Card className="rounded-2xl border-border shadow-sm">
+    <Card className="rounded-2xl border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -88,11 +91,11 @@ export function PendingApprovals() {
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-3 pt-0">
+      <CardContent className="pt-0 divide-y divide-border/60">
         {items.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-2xl border border-border p-4 flex flex-col sm:flex-row sm:items-center gap-4"
+            className="py-4 flex flex-col sm:flex-row sm:items-center gap-4"
           >
             <div className="flex-1 min-w-0 space-y-1">
               <div className="flex items-center gap-2 flex-wrap">
@@ -104,7 +107,16 @@ export function PendingApprovals() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">{item.rule} · {item.period}</p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-xs font-medium text-foreground bg-muted px-2 py-0.5 rounded-full">
+                  {item.givingRate} of sales
+                </span>
+                <span className="text-xs text-muted-foreground">→</span>
+                <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                  {item.charityShare} to this charity
+                </span>
+                <span className="text-xs text-muted-foreground">· {item.period}</span>
+              </div>
               <p className="text-xs text-muted-foreground font-mono">{item.id}</p>
             </div>
             <div className="flex items-center gap-3 sm:gap-4">

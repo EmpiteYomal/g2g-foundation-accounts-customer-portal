@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, Building2, Plug, Heart, UserCheck } from "lucide-react";
+import { CheckCircle2, ArrowRight, Building2, Landmark, ShieldCheck, Users, FolderSync } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -17,10 +17,31 @@ export function StepComplete({ data, onFinish }: Props) {
   const [checked, setChecked] = useState<number[]>([]);
 
   const steps = [
-    { icon: Building2, label: "Organisation profile created", sub: data.company.name },
-    { icon: Plug, label: "POS integration configured", sub: data.integration.posSystem },
-    { icon: Heart, label: "Giving rules set up", sub: `${data.givingRules.charities.length} charities · ${data.givingRules.frequency}` },
-    { icon: UserCheck, label: "Trustee invitation sent", sub: `${data.trustee.firstName} ${data.trustee.lastName} — ${data.trustee.email}` },
+    {
+      icon: Building2,
+      label: "Organisation profile created",
+      sub: `${data.company.name} · ABN ${data.company.abn}`,
+    },
+    {
+      icon: Landmark,
+      label: "Banking details submitted",
+      sub: `${data.banking.accountName} · BSB ${data.banking.bsb} · ${data.banking.givingPercentage}% giving rate`,
+    },
+    {
+      icon: ShieldCheck,
+      label: "Compliance & charities submitted",
+      sub: `Good2Give foundation · ${data.givingRules.charities.length} ${data.givingRules.charities.length === 1 ? "charity" : "charities"}`,
+    },
+    {
+      icon: Users,
+      label: "Authorised users configured",
+      sub: `${data.trustee.firstName} ${data.trustee.lastName} (Founder)${data.trustee.additionalUsers.length > 0 ? ` + ${data.trustee.additionalUsers.length} additional` : ""}`,
+    },
+    {
+      icon: FolderSync,
+      label: "Reporting schedule set",
+      sub: `${data.reporting.frequency.charAt(0).toUpperCase() + data.reporting.frequency.slice(1)} SFTP uploads`,
+    },
   ];
 
   useEffect(() => {
@@ -45,9 +66,9 @@ export function StepComplete({ data, onFinish }: Props) {
       </motion.div>
 
       <div className="space-y-3">
-        <h2 className="text-3xl font-bold text-foreground">You're all set!</h2>
+        <h2 className="text-3xl font-bold text-foreground">Application submitted!</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Your Foundation Account is configured. Here's a summary of what we've set up for you.
+          Your Foundation Account application is under review. Here's a summary of what we've received.
         </p>
       </div>
 
@@ -69,8 +90,8 @@ export function StepComplete({ data, onFinish }: Props) {
               }`} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-base font-semibold text-foreground">{step.label}</p>
-              <p className="text-base text-muted-foreground truncate">{step.sub}</p>
+              <p className="text-sm font-semibold text-foreground">{step.label}</p>
+              <p className="text-xs text-muted-foreground truncate">{step.sub}</p>
             </div>
             <motion.div
               initial={{ scale: 0 }}
@@ -91,7 +112,9 @@ export function StepComplete({ data, onFinish }: Props) {
         >
           Go to Dashboard <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
-        <p className="text-base text-muted-foreground">Your first transaction report will be ready within 24 hours.</p>
+        <p className="text-sm text-muted-foreground">
+          Our team will review your application and send SFTP credentials within 1–2 business days.
+        </p>
       </div>
     </div>
   );

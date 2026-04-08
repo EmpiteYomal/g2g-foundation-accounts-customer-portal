@@ -28,6 +28,15 @@ export function Header({ onMenuClick }: HeaderProps) {
         <Menu className="w-5 h-5" />
       </button>
 
+      {/* Current account — left side */}
+      <div className="hidden lg:flex items-center gap-2.5 px-1 py-1">
+        <img src="/kfcau.webp" alt="KFC Australia" className="w-8 h-8 rounded-lg object-contain flex-shrink-0" />
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-foreground leading-tight truncate">KFC Australia Pty Ltd</p>
+          <p className="text-xs text-muted-foreground leading-tight">ABN 51 004 220 518</p>
+        </div>
+      </div>
+
       <div className="flex-1" />
 
       {/* Right side */}

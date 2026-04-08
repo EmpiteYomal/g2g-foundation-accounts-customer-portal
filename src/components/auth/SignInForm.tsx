@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,13 +13,13 @@ import { ArrowRight, ShieldCheck, Zap, BarChart3, Eye, EyeOff, Check } from "luc
 const features = [
   {
     icon: Zap,
-    title: "Automated Reconciliation",
-    desc: "Upload your sales reports via SFTP — bulk transfers are automatically matched and reconciled.",
+    title: "Automatic Collection",
+    desc: "Your POS talks directly to the portal — every round-up tracked instantly.",
   },
   {
     icon: BarChart3,
-    title: "Percentage of Sales Giving",
-    desc: "Set your giving rate once. Funds distribute to your chosen DGR charities each period.",
+    title: "Smart Giving Rules",
+    desc: "Set it once. Funds distribute to your chosen charities on your schedule.",
   },
   {
     icon: ShieldCheck,
@@ -33,21 +34,13 @@ const trustBadges = [
   "Instant tax receipts",
 ];
 
-export function StepWelcome({ onNext }: { onNext: () => void }) {
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
+export function SignInForm() {
+  const router = useRouter();
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const isValid =
-    form.firstName.trim() &&
-    form.lastName.trim() &&
-    form.email.includes("@") &&
-    form.password.length >= 8;
+  const isValid = form.email.includes("@") && form.password.length >= 1;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,19 +48,8 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
     setLoading(false);
-    onNext();
+    router.push("/dashboard");
   };
-
-  const passwordStrength =
-    form.password.length === 0
-      ? 0
-      : form.password.length >= 12 && /[A-Z]/.test(form.password) && /[0-9]/.test(form.password)
-      ? 4
-      : form.password.length >= 10
-      ? 3
-      : form.password.length >= 8
-      ? 2
-      : 1;
 
   return (
     <div className="min-h-screen flex">
@@ -78,15 +60,14 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
         <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full border-[30px] border-primary/8 -translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
         <div className="relative z-10 flex flex-col h-full p-12">
-          {/* Logo — anchored top */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Image src="/logo.svg" alt="Good2Give" width={160} height={48} priority />
           </div>
 
-          {/* Spacer pushes content to bottom */}
           <div className="flex-1" />
 
-          {/* Hero copy — anchored bottom */}
+          {/* Hero copy */}
           <div className="mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-base font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -159,47 +140,18 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
             {/* Heading */}
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-foreground tracking-tight">
-                Create your account
+                Welcome back
               </h2>
               <p className="text-muted-foreground text-base mt-1">
-                Already have an account?{" "}
-                <a href="/sign-in" className="text-primary font-medium hover:underline">
-                  Sign in
+                Don&apos;t have an account?{" "}
+                <a href="/onboarding" className="text-primary font-medium hover:underline">
+                  Sign up
                 </a>
               </p>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label htmlFor="firstName" className="text-base font-medium">
-                    First name
-                  </Label>
-                  <Input
-                    id="firstName"
-                    placeholder="Jane"
-                    value={form.firstName}
-                    onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
-                    className="h-10 rounded-xl text-base"
-                    required
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="lastName" className="text-base font-medium">
-                    Last name
-                  </Label>
-                  <Input
-                    id="lastName"
-                    placeholder="Smith"
-                    value={form.lastName}
-                    onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
-                    className="h-10 rounded-xl text-base"
-                    required
-                  />
-                </div>
-              </div>
-
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-base font-medium">
                   Work email
@@ -212,23 +164,28 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   className="h-10 rounded-xl text-base"
                   required
+                  autoFocus
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label htmlFor="password" className="text-base font-medium">
-                  Password
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-base font-medium">
+                    Password
+                  </Label>
+                  <a href="#" className="text-sm text-primary hover:underline font-medium">
+                    Forgot password?
+                  </a>
+                </div>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Min. 8 characters"
+                    placeholder="Enter your password"
                     value={form.password}
                     onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                     className="h-10 rounded-xl text-base pr-10"
                     required
-                    minLength={8}
                   />
                   <button
                     type="button"
@@ -238,26 +195,6 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {form.password.length > 0 && (
-                  <div className="flex gap-1 pt-1">
-                    {[1, 2, 3, 4].map((lvl) => (
-                      <div
-                        key={lvl}
-                        className={`h-1 flex-1 rounded-full transition-colors ${
-                          lvl <= passwordStrength
-                            ? passwordStrength === 4
-                              ? "bg-emerald-500"
-                              : passwordStrength === 3
-                              ? "bg-primary"
-                              : passwordStrength === 2
-                              ? "bg-amber-400"
-                              : "bg-red-400"
-                            : "bg-muted"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
 
               <Button
@@ -268,11 +205,11 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    Creating account…
+                    Signing in…
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    Create account <ArrowRight className="w-4 h-4" />
+                    Sign in <ArrowRight className="w-4 h-4" />
                   </span>
                 )}
               </Button>
@@ -301,7 +238,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
             </Button>
 
             <p className="text-center text-sm text-muted-foreground mt-6 leading-relaxed">
-              By creating an account you agree to our{" "}
+              By signing in you agree to our{" "}
               <a href="#" className="underline hover:text-foreground">Terms of Service</a>{" "}
               and{" "}
               <a href="#" className="underline hover:text-foreground">Privacy Policy</a>.

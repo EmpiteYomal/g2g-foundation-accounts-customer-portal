@@ -43,7 +43,7 @@ const typeIcon: Record<string, typeof RefreshCw> = {
 
 export function GivingRulesPanel() {
   return (
-    <Card className="rounded-2xl border-border shadow-sm">
+    <Card className="rounded-2xl border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
