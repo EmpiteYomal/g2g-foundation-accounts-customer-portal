@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -73,17 +74,22 @@ export function Header({ onMenuClick }: HeaderProps) {
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52 rounded-2xl">
-            <DropdownMenuLabel className="font-normal">
-              <p className="font-semibold">Jane Smith</p>
-              <p className="text-xs text-muted-foreground">jane@kfc.com.au</p>
-            </DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-52">
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                <p className="font-semibold text-foreground">Jane Smith</p>
+                <p className="text-xs text-muted-foreground">jane@kfc.com.au</p>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="rounded-xl">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="rounded-xl">Account Settings</DropdownMenuItem>
-            <DropdownMenuItem className="rounded-xl">Switch Organisation</DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Account Settings</DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="rounded-xl text-destructive focus:text-destructive">Sign Out</DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem variant="destructive">Sign Out</DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
