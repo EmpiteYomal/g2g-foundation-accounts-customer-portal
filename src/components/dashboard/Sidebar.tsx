@@ -9,7 +9,7 @@ import {
   Settings,
   HelpCircle,
   X,
-  TrendingUp,
+  SlidersHorizontal,
   Bell,
   Users,
 } from "lucide-react";
@@ -21,7 +21,7 @@ const navItems = [
     section: "Overview",
     items: [
       { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/dashboard/impact", label: "Impact Report", icon: TrendingUp },
+      { href: "/dashboard/configuration", label: "Configuration", icon: SlidersHorizontal },
     ],
   },
   {
