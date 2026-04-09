@@ -206,7 +206,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
 
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-base font-medium">
-                  Work email
+                  Email
                 </Label>
                 <Input
                   id="email"

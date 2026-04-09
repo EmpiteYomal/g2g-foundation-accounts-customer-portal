@@ -168,7 +168,7 @@ export function SignInForm() {
 
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-base font-medium">Work email</Label>
+                    <Label htmlFor="email" className="text-base font-medium">Email</Label>
                     <Input
                       id="email"
                       type="email"
@@ -290,7 +290,7 @@ export function SignInForm() {
 
                 <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="reset-email" className="text-base font-medium">Work email</Label>
+                    <Label htmlFor="reset-email" className="text-base font-medium">Email</Label>
                     <Input
                       id="reset-email"
                       type="email"
