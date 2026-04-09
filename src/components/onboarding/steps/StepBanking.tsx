@@ -5,11 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft, Landmark, Upload, FileText, Info } from "lucide-react";
-import type { OnboardingData } from "../OnboardingFlow";
+type BankingData = {
+  accountName: string;
+  bsb: string;
+  accountNumber: string;
+  bankDocFileName: string;
+  skipped: boolean;
+};
 
 type Props = {
-  data: OnboardingData["banking"];
-  onChange: (v: Partial<OnboardingData["banking"]>) => void;
+  data: BankingData;
+  onChange: (v: Partial<BankingData>) => void;
   onNext: () => void;
   onBack: () => void;
 };

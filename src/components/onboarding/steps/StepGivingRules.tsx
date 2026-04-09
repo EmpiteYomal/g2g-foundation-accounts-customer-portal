@@ -6,11 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft, ShieldCheck, Plus, Trash2, AlertCircle, Info, Search, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { OnboardingData } from "../OnboardingFlow";
+type GivingRulesData = {
+  charities: { name: string; allocation: number }[];
+  founderDeclared: boolean;
+};
 
 type Props = {
-  data: OnboardingData["givingRules"];
-  onChange: (v: Partial<OnboardingData["givingRules"]>) => void;
+  data: GivingRulesData;
+  onChange: (v: Partial<GivingRulesData>) => void;
   onNext: () => void;
   onBack: () => void;
 };

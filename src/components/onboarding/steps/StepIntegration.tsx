@@ -11,11 +11,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowRight, ArrowLeft, Plug, Percent } from "lucide-react";
-import type { OnboardingData } from "../OnboardingFlow";
+type IntegrationData = {
+  posSystem: string;
+  apiKey: string;
+  percentage: number;
+};
 
 type Props = {
-  data: OnboardingData["integration"];
-  onChange: (v: Partial<OnboardingData["integration"]>) => void;
+  data: IntegrationData;
+  onChange: (v: Partial<IntegrationData>) => void;
   onNext: () => void;
   onBack: () => void;
 };
@@ -103,7 +107,7 @@ export function StepIntegration({ data, onChange, onNext, onBack }: Props) {
                 max="100"
                 step="0.1"
                 value={data.percentage}
-                onChange={(e) => onChange({ percentage: e.target.value })}
+                onChange={(e) => onChange({ percentage: parseFloat(e.target.value) })}
                 className="h-9 rounded-xl pr-7 text-base"
               />
               <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground text-base">%</span>

@@ -3,11 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowLeft, FolderSync, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { OnboardingData } from "../OnboardingFlow";
+type ReportingData = {
+  frequency: string;
+};
 
 type Props = {
-  data: OnboardingData["reporting"];
-  onChange: (v: Partial<OnboardingData["reporting"]>) => void;
+  data: ReportingData;
+  onChange: (v: Partial<ReportingData>) => void;
   onNext: () => void;
   onBack: () => void;
 };

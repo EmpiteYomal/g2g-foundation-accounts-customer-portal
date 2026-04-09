@@ -85,7 +85,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
         <div className="relative z-10 flex flex-col h-full p-12">
           {/* Logo — anchored top */}
           <div className="flex-shrink-0">
-            <Image src="/logo.svg" alt="Good2Give" width={160} height={48} priority />
+            <Image src="/logo.svg" alt="Goodstack Foundation Accounts" width={160} height={48} priority />
           </div>
 
           {/* Spacer pushes content to bottom */}
@@ -95,7 +95,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
           <div className="mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-base font-medium mb-6">
               <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-              Foundation Account Platform
+              Goodstack Foundation Accounts
             </div>
 
             <h1 className="text-4xl xl:text-5xl font-bold text-foreground leading-tight tracking-tight mb-5">
@@ -104,7 +104,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
             </h1>
 
             <p className="text-muted-foreground text-base leading-relaxed max-w-sm">
-              The Good2Give Foundation Account Platform lets your organisation collect, manage, and distribute charitable funds — with full trustee oversight and compliance built in.
+              The Goodstack Foundation Accounts platform lets your organisation collect, manage, and distribute charitable funds — with full trustee oversight and compliance built in.
             </p>
           </div>
 
@@ -150,7 +150,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
       <div className="w-full lg:w-[570px] flex-shrink-0 flex flex-col bg-white">
         {/* Mobile logo */}
         <div className="lg:hidden flex items-center px-6 py-5 border-b border-border">
-          <Image src="/logo.svg" alt="Good2Give" width={120} height={36} priority />
+          <Image src="/logo.svg" alt="Goodstack Foundation Accounts" width={120} height={36} priority />
         </div>
 
         <div className="flex-1 flex items-center justify-center px-6 py-8 lg:px-8">
@@ -166,7 +166,7 @@ export function StepWelcome({ onNext }: { onNext: () => void }) {
                 Create your account
               </h2>
               <p className="text-muted-foreground text-base mt-1">
-                Register your organisation on the Foundation Account Platform.{" "}
+                Register your organisation on the Goodstack Foundation Accounts.{" "}
                 <a href="/sign-in" className="text-primary font-medium hover:underline">
                   Sign in
                 </a>

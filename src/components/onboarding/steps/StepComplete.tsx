@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, Building2, Landmark, Users, Clock } from "lucide-react";
+import { CheckCircle2, ArrowRight, Building2, Users, Clock } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -26,13 +26,6 @@ export function StepComplete({ data, onFinish }: Props) {
       icon: Users,
       label: "Trustee details recorded",
       sub: `${data.trustee.firstName} ${data.trustee.lastName} · ${data.trustee.role || "Trustee"}`,
-    },
-    {
-      icon: Landmark,
-      label: data.banking.skipped ? "Bank details — to be added after approval" : "Bank details submitted",
-      sub: data.banking.skipped
-        ? "You can add these once your account is approved"
-        : `Account: ${data.banking.accountName} · BSB ${data.banking.bsb}`,
     },
     {
       icon: Clock,
