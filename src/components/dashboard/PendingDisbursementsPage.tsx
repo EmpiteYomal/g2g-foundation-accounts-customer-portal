@@ -21,7 +21,9 @@ import {
   CalendarDays,
   Repeat,
   ShieldCheck,
+  Download,
 } from "lucide-react";
+import { downloadABA } from "@/lib/abaDownload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -748,6 +750,19 @@ function PackageCard({ pkg }: { pkg: DisbursementPackage }) {
                             <CIcon className="w-3 h-3" />
                             {cCfg.label}
                           </span>
+                          {line.status === "processed" && (
+                            <div className="pt-1">
+                              <button
+                                type="button"
+                                onClick={() => downloadABA({ packageId: pkg.id, charityName: line.charity, netAmount: line.netAmount })}
+                                title="Download ABA file"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 hover:bg-primary/5 px-2.5 py-1 rounded-lg transition-colors border border-primary/20 hover:border-primary/40"
+                              >
+                                <Download className="w-3 h-3" />
+                                Download ABA
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

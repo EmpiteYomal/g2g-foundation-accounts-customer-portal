@@ -11,7 +11,9 @@ import {
   CheckCircle2,
   Clock,
   RefreshCw,
+  Download,
 } from "lucide-react";
+import { downloadABA } from "@/lib/abaDownload";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -75,7 +77,7 @@ const fmt = (n: number) =>
 
 // ─── Charity row ──────────────────────────────────────────────────────────────
 
-function CharityRow({ charity, color }: { charity: MyCharity; color: string }) {
+function CharityRow({ charity, color }: { charity: MyCharity; color: string; }) {
   const [expanded, setExpanded] = useState(false);
   const history = GIVING_HISTORY[charity.id] ?? [];
 
@@ -137,18 +139,19 @@ function CharityRow({ charity, color }: { charity: MyCharity; color: string }) {
                 <p className="text-xs text-muted-foreground text-center py-6">No giving history yet.</p>
               ) : (
                 <>
-                  <div className="grid grid-cols-5 gap-4 px-4 py-2 border-b border-border">
+                  <div className="grid grid-cols-6 gap-3 px-4 py-2 border-b border-border">
                     <p className="text-xs font-semibold text-muted-foreground">Package</p>
                     <p className="text-xs font-semibold text-muted-foreground">Date</p>
                     <p className="text-xs font-semibold text-muted-foreground">Allocation</p>
                     <p className="text-xs font-semibold text-muted-foreground text-right">Amount (net)</p>
                     <p className="text-xs font-semibold text-muted-foreground text-right">Status</p>
+                    <p className="text-xs font-semibold text-muted-foreground text-right">ABA</p>
                   </div>
                   {history.map((r) => {
                     const s = statusConfig[r.status];
                     const StatusIcon = s.icon;
                     return (
-                      <div key={r.packageId + r.date} className="grid grid-cols-5 gap-4 px-4 py-3 border-b border-border/50 last:border-0 items-center">
+                      <div key={r.packageId + r.date} className="grid grid-cols-6 gap-3 px-4 py-3 border-b border-border/50 last:border-0 items-center">
                         <div className="flex items-center gap-2">
                           <ArrowUpFromLine className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                           <span className="text-xs font-mono text-foreground">{r.packageId}</span>
@@ -164,6 +167,21 @@ function CharityRow({ charity, color }: { charity: MyCharity; color: string }) {
                             <StatusIcon className="w-3 h-3" />
                             {s.label}
                           </span>
+                        </div>
+                        <div className="flex justify-end">
+                          {r.status === "processed" ? (
+                            <button
+                              type="button"
+                              onClick={() => downloadABA({ packageId: r.packageId, charityName: charity.name, netAmount: r.netAmount })}
+                              title="Download ABA file"
+                              className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 hover:bg-primary/5 px-2 py-1 rounded-lg transition-colors border border-primary/20 hover:border-primary/40"
+                            >
+                              <Download className="w-3 h-3" />
+                              ABA
+                            </button>
+                          ) : (
+                            <span className="text-xs text-muted-foreground/40">—</span>
+                          )}
                         </div>
                       </div>
                     );
