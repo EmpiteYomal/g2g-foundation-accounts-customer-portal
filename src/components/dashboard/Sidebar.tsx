@@ -8,14 +8,16 @@ import {
   HelpCircle,
   X,
   Users,
+  UserRound,
   Wallet,
   HandCoins,
   Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { AccountType } from "./DashboardLayout";
 
-const navItems = [
+const ORG_NAV = [
   {
     section: "Overview",
     items: [
@@ -45,6 +47,36 @@ const navItems = [
   },
 ];
 
+const PERSON_NAV = [
+  {
+    section: "Overview",
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    ],
+  },
+  {
+    section: "Foundation Account",
+    items: [
+      { href: "/dashboard/balance", label: "Account Balance", icon: Wallet },
+    ],
+  },
+  {
+    section: "Giving",
+    items: [
+      { href: "/dashboard/disbursements", label: "My Givings", icon: HandCoins, badge: "3" },
+      { href: "/dashboard/charities", label: "My Charities", icon: Heart },
+    ],
+  },
+  {
+    section: "Personal",
+    items: [
+      { href: "/dashboard/team", label: "Family & Friends", icon: UserRound },
+      { href: "/dashboard/reports", label: "Reports", icon: FileText },
+      { href: "/dashboard/settings", label: "Settings", icon: Settings },
+    ],
+  },
+];
+
 const bottomItems = [
   { href: "/dashboard/support", label: "Help & Support", icon: HelpCircle },
 ];
@@ -52,17 +84,19 @@ const bottomItems = [
 type SidebarProps = {
   open: boolean;
   onClose: () => void;
+  accountType: AccountType;
 };
 
-export function Sidebar({ open, onClose }: SidebarProps) {
+export function Sidebar({ open, onClose, accountType }: SidebarProps) {
   const pathname = usePathname();
+  const navItems = accountType === "person" ? PERSON_NAV : ORG_NAV;
 
   const NavContent = () => (
     <nav className="flex flex-col h-full py-4">
       {/* Logo */}
       <div className="px-4 mb-6 flex items-center justify-between">
         <div className="flex items-center">
-          <img src="/logo.svg" alt="Good2Give" className="h-9 w-auto" />
+          <img src="/logo.svg" alt="Goodstack Foundation Accounts" className="h-9 w-auto" />
         </div>
         <button
           onClick={onClose}
@@ -133,7 +167,9 @@ export function Sidebar({ open, onClose }: SidebarProps) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-foreground text-sm font-semibold truncate">Jane Smith</p>
-          <p className="text-muted-foreground text-xs truncate">Trustee · jane@kfc.com.au</p>
+          <p className="text-muted-foreground text-xs truncate">
+            {accountType === "person" ? "Account Holder · jane@gmail.com" : "Trustee · jane@kfc.com.au"}
+          </p>
         </div>
       </div>
     </nav>

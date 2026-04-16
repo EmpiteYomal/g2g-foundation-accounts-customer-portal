@@ -11,13 +11,21 @@ const charityLogo: Record<string, string> = {
   "Cancer Council":      "/charity logos/cancercouncil.png",
 };
 
-const transactions = [
-  { id: "TXN-8842", charity: "Red Cross Australia", amount: "+$2,904.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "60%", givingId: "GIVING-221", status: "completed"  },
-  { id: "TXN-8841", charity: "Salvation Army",      amount: "+$1,936.00", date: "Apr 7, 2026",  givingRate: "1%", charityShare: "40%", givingId: "GIVING-221", status: "completed"  },
-  { id: "TXN-8840", charity: "Red Cross Australia", amount: "+$2,611.50", date: "Mar 31, 2026", givingRate: "1%", charityShare: "60%", givingId: "GIVING-208", status: "completed"  },
-  { id: "TXN-8839", charity: "Salvation Army",      amount: "+$1,741.00", date: "Mar 31, 2026", givingRate: "1%", charityShare: "40%", givingId: "GIVING-208", status: "completed"  },
-  { id: "TXN-8838", charity: "Beyond Blue",         amount: "+$500.00",   date: "Mar 28, 2026", givingRate: "1%", charityShare: "60%", givingId: "GIVING-198", status: "processing" },
-  { id: "TXN-8837", charity: "Cancer Council",      amount: "+$350.00",   date: "Mar 24, 2026", givingRate: "1%", charityShare: "40%", givingId: "GIVING-198", status: "completed"  },
+const ALL_TRANSACTIONS = [
+  { id: "TXN-8842", charity: "Red Cross Australia", amount: "+$2,904.00", date: "Apr 7, 2026",  charityShare: "60%", givingId: "GIVING-221", status: "completed"  },
+  { id: "TXN-8841", charity: "Salvation Army",      amount: "+$1,936.00", date: "Apr 7, 2026",  charityShare: "40%", givingId: "GIVING-221", status: "completed"  },
+  { id: "TXN-8840", charity: "Red Cross Australia", amount: "+$2,611.50", date: "Mar 31, 2026", charityShare: "60%", givingId: "GIVING-208", status: "completed"  },
+  { id: "TXN-8839", charity: "Salvation Army",      amount: "+$1,741.00", date: "Mar 31, 2026", charityShare: "40%", givingId: "GIVING-208", status: "completed"  },
+  { id: "TXN-8838", charity: "Beyond Blue",         amount: "+$500.00",   date: "Mar 28, 2026", charityShare: "60%", givingId: "GIVING-198", status: "processing" },
+  { id: "TXN-8837", charity: "Cancer Council",      amount: "+$350.00",   date: "Mar 24, 2026", charityShare: "40%", givingId: "GIVING-198", status: "completed"  },
+  { id: "TXN-8833", charity: "Red Cross Australia", amount: "+$2,394.00", date: "Feb 28, 2026", charityShare: "60%", givingId: "GIVING-195", status: "completed"  },
+  { id: "TXN-8832", charity: "Salvation Army",      amount: "+$1,596.00", date: "Feb 28, 2026", charityShare: "40%", givingId: "GIVING-195", status: "completed"  },
+  { id: "TXN-8829", charity: "Cancer Council",      amount: "+$480.00",   date: "Feb 14, 2026", charityShare: "60%", givingId: "GIVING-189", status: "completed"  },
+  { id: "TXN-8828", charity: "Beyond Blue",         amount: "+$320.00",   date: "Feb 14, 2026", charityShare: "40%", givingId: "GIVING-189", status: "completed"  },
+  { id: "TXN-8820", charity: "Red Cross Australia", amount: "+$2,100.00", date: "Jan 31, 2026", charityShare: "60%", givingId: "GIVING-181", status: "completed"  },
+  { id: "TXN-8819", charity: "Salvation Army",      amount: "+$1,400.00", date: "Jan 31, 2026", charityShare: "40%", givingId: "GIVING-181", status: "completed"  },
+  { id: "TXN-8814", charity: "Beyond Blue",         amount: "+$750.00",   date: "Jan 15, 2026", charityShare: "50%", givingId: "GIVING-176", status: "completed"  },
+  { id: "TXN-8813", charity: "Cancer Council",      amount: "+$750.00",   date: "Jan 15, 2026", charityShare: "50%", givingId: "GIVING-176", status: "completed"  },
 ];
 
 const statusConfig: Record<string, { label: string; class: string }> = {
@@ -27,7 +35,13 @@ const statusConfig: Record<string, { label: string; class: string }> = {
   failed:     { label: "Failed",     class: "bg-red-50 text-red-800 border-red-200" },
 };
 
-export function RecentTransactions() {
+type Props = {
+  extended?: boolean;
+};
+
+export function RecentTransactions({ extended = false }: Props) {
+  const transactions = extended ? ALL_TRANSACTIONS : ALL_TRANSACTIONS.slice(0, 6);
+
   return (
     <Card className="rounded-2xl border-border">
       <CardHeader className="pb-3">

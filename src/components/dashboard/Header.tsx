@@ -26,9 +26,10 @@ const NOTIFICATIONS = [
 
 type HeaderProps = {
   onMenuClick: () => void;
+  accountType?: "org" | "person";
 };
 
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header({ onMenuClick, accountType = "org" }: HeaderProps) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -58,27 +59,41 @@ export function Header({ onMenuClick }: HeaderProps) {
       </button>
 
       {/* Current account — left side */}
-      <div className="hidden lg:flex items-center gap-2.5 px-1 py-1">
-        <img src="/kfcau.webp" alt="KFC Australia" className="w-8 h-8 rounded-lg object-contain flex-shrink-0" />
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-foreground leading-tight truncate">KFC Australia Pty Ltd</p>
-          <p className="text-xs text-muted-foreground leading-tight">ABN 51 004 220 518</p>
+      {accountType === "person" ? (
+        <div className="hidden lg:flex items-center gap-2.5 px-1 py-1">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">JS</span>
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground leading-tight truncate">Jane Smith</p>
+            <p className="text-xs text-muted-foreground leading-tight">Personal Foundation Account</p>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="hidden lg:flex items-center gap-2.5 px-1 py-1">
+          <img src="/kfcau.webp" alt="KFC Australia" className="w-8 h-8 rounded-lg object-contain flex-shrink-0" />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground leading-tight truncate">KFC Australia Pty Ltd</p>
+            <p className="text-xs text-muted-foreground leading-tight">ABN 51 004 220 518</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1" />
 
       {/* Right side */}
       <div className="flex items-center gap-2">
-        {/* Pending approvals callout */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="hidden sm:flex items-center gap-2 rounded-xl h-9 text-sm border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:text-amber-950 hover:border-amber-300"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-          3 pending approvals
-        </Button>
+        {/* Pending approvals callout — org only */}
+        {accountType !== "person" && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden sm:flex items-center gap-2 rounded-xl h-9 text-sm border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 hover:text-amber-950 hover:border-amber-300"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+            3 pending approvals
+          </Button>
+        )}
 
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
@@ -163,7 +178,7 @@ export function Header({ onMenuClick }: HeaderProps) {
               </Avatar>
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-semibold text-foreground leading-tight">Jane Smith</p>
-                <p className="text-xs text-muted-foreground leading-tight">Trustee</p>
+                <p className="text-xs text-muted-foreground leading-tight">{accountType === "person" ? "Account Holder" : "Trustee"}</p>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
           </DropdownMenuTrigger>

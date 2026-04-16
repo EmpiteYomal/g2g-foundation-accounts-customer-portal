@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Clock,
@@ -162,7 +162,7 @@ function fmtShort(n: number) {
 
 // ─── New Distribution Modal ───────────────────────────────────────────────────
 
-function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: () => void }) {
+function NewDistributionModal({ onClose, onSubmit, isIndividual = false }: { onClose: () => void; onSubmit: () => void; isIndividual?: boolean }) {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [search, setSearch] = useState("");
@@ -266,7 +266,7 @@ function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSu
           <div>
             <h2 className="text-lg font-bold text-foreground">New Giving</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {submitted ? "Submitted for trustee approval" : `Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`}
+              {submitted ? (isIndividual ? "Submitted to G2G" : "Submitted for trustee approval") : `Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`}
             </p>
           </div>
           <button
@@ -321,13 +321,17 @@ function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSu
                 <div>
                   <h3 className="text-xl font-bold text-foreground">Giving submitted!</h3>
                   <p className="text-muted-foreground text-sm mt-1 max-w-sm">
-                    Your giving has been sent to the trustee for approval. Once approved, it will be submitted to G2G for processing.
+                    {isIndividual
+                      ? "Your giving has been submitted directly to G2G for processing."
+                      : "Your giving has been sent to the trustee for approval. Once approved, it will be submitted to G2G for processing."}
                   </p>
                 </div>
                 <div className="bg-muted/50 rounded-2xl border border-border p-5 w-full text-left space-y-3">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-4 h-4 text-primary flex-shrink-0" />
-                    <span className="text-sm text-foreground font-medium">Awaiting trustee approval — Jane Smith</span>
+                    <span className="text-sm text-foreground font-medium">
+                      {isIndividual ? "Submitted to G2G for processing" : "Awaiting trustee approval — Jane Smith"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <ArrowUpFromLine className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -528,7 +532,11 @@ function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSu
               <motion.div key="step2" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="space-y-5">
                 <div>
                   <p className="text-sm font-semibold text-foreground mb-0.5">Review your giving</p>
-                  <p className="text-xs text-muted-foreground">Submitting will send this giving to your trustee for approval before it goes to G2G.</p>
+                  <p className="text-xs text-muted-foreground">
+                    {isIndividual
+                      ? "Submitting will send this giving directly to G2G for processing."
+                      : "Submitting will send this giving to your trustee for approval before it goes to G2G."}
+                  </p>
                 </div>
 
                 {/* Summary card */}
@@ -581,11 +589,14 @@ function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSu
                   </div>
                 </div>
 
-                {/* Trustee notice */}
+                {/* Trustee / direct notice */}
                 <div className="flex items-start gap-3 p-4 rounded-2xl bg-primary/5 border border-primary/20">
                   <ShieldCheck className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
                   <p className="text-sm text-foreground/80 leading-relaxed">
-                    This giving will be sent to <strong>Jane Smith (Trustee)</strong> for approval. Once approved, G2G will deduct the admin fee and process each charity individually.
+                    {isIndividual
+                      ? "This giving will be submitted directly to G2G. G2G will deduct the admin fee and process each charity individually."
+                      : <>This giving will be sent to <strong>Jane Smith (Trustee)</strong> for approval. Once approved, G2G will deduct the admin fee and process each charity individually.</>
+                    }
                   </p>
                 </div>
               </motion.div>
@@ -617,7 +628,8 @@ function NewDistributionModal({ onClose, onSubmit }: { onClose: () => void; onSu
                 onClick={handleSubmit}
                 className="rounded-full px-6 h-10 bg-emerald-700 hover:bg-emerald-800 text-white"
               >
-                <ShieldCheck className="w-4 h-4 mr-1.5" /> Submit for Approval
+                <ShieldCheck className="w-4 h-4 mr-1.5" />
+                {isIndividual ? "Submit Giving" : "Submit for Approval"}
               </Button>
             )}
           </div>
@@ -658,7 +670,7 @@ function PackageCard({ pkg }: { pkg: DisbursementPackage }) {
             </span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            Submitted {pkg.submittedDate} · Approved by {pkg.approvedBy}
+            Submitted {pkg.submittedDate}
           </p>
           <div className="flex items-center gap-4 mt-2 flex-wrap">
             <span className="text-xs text-muted-foreground">Total: <span className="text-foreground font-semibold">{fmt(pkg.totalGross)}</span></span>
@@ -811,6 +823,11 @@ function PackageCard({ pkg }: { pkg: DisbursementPackage }) {
 export function PendingDisbursementsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [justSubmitted, setJustSubmitted] = useState(false);
+  const [isIndividual, setIsIndividual] = useState(false);
+
+  useEffect(() => {
+    setIsIndividual(localStorage.getItem("accountType") === "person");
+  }, []);
 
   const pending   = PACKAGES.filter((p) => p.status !== "completed");
   const completed = PACKAGES.filter((p) => p.status === "completed");
@@ -852,7 +869,9 @@ export function PendingDisbursementsPage() {
             >
               <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               <p className="text-sm text-emerald-800 font-medium">
-                Giving submitted — awaiting trustee approval from Jane Smith.
+                {isIndividual
+                  ? "Giving submitted — sent to G2G for processing."
+                  : "Giving submitted — awaiting trustee approval from Jane Smith."}
               </p>
             </motion.div>
           )}
@@ -911,7 +930,9 @@ export function PendingDisbursementsPage() {
           <AlertCircle className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-blue-900 leading-relaxed">
             <span className="font-semibold">How givings work: </span>
-            Your trustee approves a giving → G2G deducts the admin fee and runs compliance checks → each charity is processed individually. If a charity is put on hold, the net amount is reversed back to your Foundation Account.
+            {isIndividual
+              ? "You submit a giving → G2G deducts the admin fee and runs compliance checks → each charity is processed individually. If a charity is put on hold, the net amount is reversed back to your Foundation Account."
+              : "Your trustee approves a giving → G2G deducts the admin fee and runs compliance checks → each charity is processed individually. If a charity is put on hold, the net amount is reversed back to your Foundation Account."}
           </p>
         </div>
 
@@ -936,6 +957,7 @@ export function PendingDisbursementsPage() {
       <AnimatePresence>
         {modalOpen && (
           <NewDistributionModal
+            isIndividual={isIndividual}
             onClose={() => setModalOpen(false)}
             onSubmit={() => {
               setModalOpen(false);

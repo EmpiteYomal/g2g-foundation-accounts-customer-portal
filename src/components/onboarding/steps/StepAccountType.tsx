@@ -28,7 +28,7 @@ const options = [
     title: "Individual",
     description:
       "Set up a personal Foundation Account to manage and distribute your charitable giving.",
-    badge: "Coming soon",
+    badge: null,
   },
 ];
 

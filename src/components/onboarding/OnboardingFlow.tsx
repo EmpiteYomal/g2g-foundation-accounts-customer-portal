@@ -7,6 +7,7 @@ import { StepWelcome } from "./steps/StepWelcome";
 import { StepAccountType } from "./steps/StepAccountType";
 import { StepCompany } from "./steps/StepCompany";
 import { StepTrustee } from "./steps/StepTrustee";
+import { StepPersonal } from "./steps/StepPersonal";
 import { StepComplete } from "./steps/StepComplete";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
@@ -35,9 +36,18 @@ export type OnboardingData = {
     role: string;
     dateOfBirth: string;
   };
+  personal: {
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    phone: string;
+    address: string;
+    suburb: string;
+    state: string;
+    postcode: string;
+  };
 };
 
-// Steps shown in the header nav (excludes Welcome step 0)
 const ORG_STEPS = [
   { id: 0, label: "Welcome" },
   { id: 1, label: "Account type" },
@@ -46,7 +56,12 @@ const ORG_STEPS = [
   { id: 4, label: "Complete" },
 ];
 
-const TOTAL_STEPS = ORG_STEPS.length - 1;
+const PERSON_STEPS = [
+  { id: 0, label: "Welcome" },
+  { id: 1, label: "Account type" },
+  { id: 2, label: "Personal details" },
+  { id: 3, label: "Complete" },
+];
 
 export function OnboardingFlow() {
   const router = useRouter();
@@ -74,6 +89,16 @@ export function OnboardingFlow() {
       role: "",
       dateOfBirth: "",
     },
+    personal: {
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      phone: "",
+      address: "",
+      suburb: "",
+      state: "",
+      postcode: "",
+    },
   });
 
   type NestedSection = Exclude<keyof OnboardingData, "accountType">;
@@ -88,9 +113,13 @@ export function OnboardingFlow() {
     }));
   };
 
+  // Determine the active step list based on chosen account type
+  const activeSteps = data.accountType === "person" ? PERSON_STEPS : ORG_STEPS;
+  const maxStep = activeSteps.length - 1;
+
   const next = () => {
     setDirection(1);
-    setStep((s) => Math.min(s + 1, ORG_STEPS.length - 1));
+    setStep((s) => Math.min(s + 1, maxStep));
   };
 
   const back = () => {
@@ -99,10 +128,16 @@ export function OnboardingFlow() {
   };
 
   const finish = () => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("accountType", data.accountType ?? "org");
+    }
     router.push("/dashboard");
   };
 
-  const progressPercent = step <= 1 ? 0 : Math.round(((step - 1) / (TOTAL_STEPS - 1)) * 100);
+  // Nav steps = everything between Welcome and Complete
+  const navSteps = activeSteps.slice(1, -1);
+  const totalNavSteps = navSteps.length;
+  const progressPercent = step <= 1 ? 0 : Math.min(100, Math.round(((step - 1) / totalNavSteps) * 100));
 
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? 60 : -60, opacity: 0 }),
@@ -114,16 +149,15 @@ export function OnboardingFlow() {
     return <StepWelcome onNext={next} />;
   }
 
-  // Nav steps = steps 1 through 3 (exclude welcome and complete)
-  const navSteps = ORG_STEPS.slice(1, -1);
+  const isComplete = step === maxStep;
 
   return (
     <div className="min-h-screen bg-[#FAF9F8] flex flex-col">
       {/* Top bar */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-border">
-        <Image src="/logo.svg" alt="Good2Give" width={120} height={36} priority />
+        <Image src="/logo.svg" alt="Goodstack Foundation Accounts" width={120} height={36} priority />
 
-        {step < ORG_STEPS.length - 1 && (
+        {!isComplete && (
           <div className="hidden sm:flex items-center gap-6">
             {navSteps.map((s, i) => (
               <div
@@ -154,13 +188,13 @@ export function OnboardingFlow() {
         )}
 
         <div className="text-base text-muted-foreground">
-          {step < ORG_STEPS.length - 1 && (
-            <span>Step {step} of {TOTAL_STEPS - 1}</span>
+          {!isComplete && (
+            <span>Step {step} of {totalNavSteps}</span>
           )}
         </div>
       </header>
 
-      {step < ORG_STEPS.length - 1 && (
+      {!isComplete && (
         <div className="sticky top-[65px] z-30">
           <Progress value={progressPercent} className="h-0.5 rounded-none bg-border" />
         </div>
@@ -186,7 +220,9 @@ export function OnboardingFlow() {
                 onBack={back}
               />
             )}
-            {step === 2 && (
+
+            {/* ── Org flow ── */}
+            {step === 2 && data.accountType !== "person" && (
               <StepCompany
                 data={data.company}
                 onChange={(v) => updateData("company", v)}
@@ -194,7 +230,7 @@ export function OnboardingFlow() {
                 onBack={back}
               />
             )}
-            {step === 3 && (
+            {step === 3 && data.accountType !== "person" && (
               <StepTrustee
                 data={data.trustee}
                 onChange={(v) => updateData("trustee", v)}
@@ -203,6 +239,19 @@ export function OnboardingFlow() {
               />
             )}
             {step === 4 && <StepComplete data={data} onFinish={finish} />}
+
+            {/* ── Individual flow ── */}
+            {step === 2 && data.accountType === "person" && (
+              <StepPersonal
+                data={data.personal}
+                onChange={(v) => updateData("personal", v)}
+                onNext={next}
+                onBack={back}
+              />
+            )}
+            {step === 3 && data.accountType === "person" && (
+              <StepComplete data={data} onFinish={finish} />
+            )}
           </motion.div>
         </AnimatePresence>
       </main>

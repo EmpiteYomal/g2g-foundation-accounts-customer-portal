@@ -3,51 +3,60 @@
 import { motion } from "framer-motion";
 import { Wallet, TrendingUp, Clock, CreditCard } from "lucide-react";
 
-const stats = [
-  {
-    label: "Available Balance",
-    value: "$48,392",
-    sub: "Foundation account balance",
-    trend: "+$3,210 this month",
-    positive: true,
-    icon: Wallet,
-    color: "text-violet-600",
-    bg: "bg-violet-50",
-  },
-  {
-    label: "Monthly Donations",
-    value: "$3,210",
-    sub: "vs $2,990 last month",
-    trend: "+7.4%",
-    positive: true,
-    icon: TrendingUp,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
-  },
-  {
-    label: "Pending Disbursements",
-    value: "$6,840",
-    sub: "3 awaiting processing",
-    trend: "Action needed",
-    positive: false,
-    icon: Clock,
-    color: "text-amber-600",
-    bg: "bg-amber-50",
-    urgent: true,
-  },
-  {
-    label: "Contribution Methods",
-    value: "2 Active",
-    sub: "Bank transfer · Cards",
-    trend: "Configure more",
-    positive: true,
-    icon: CreditCard,
-    color: "text-blue-600",
-    bg: "bg-blue-50",
-  },
-];
+type Props = {
+  accountType?: "org" | "person";
+};
 
-export function StatCards() {
+export function StatCards({ accountType = "org" }: Props) {
+  const isIndividual = accountType === "person";
+
+  const stats = [
+    {
+      label: "Available Balance",
+      value: "$48,392",
+      sub: "Foundation account balance",
+      trend: "+$3,210 this month",
+      positive: true,
+      icon: Wallet,
+      color: "text-violet-600",
+      bg: "bg-violet-50",
+      urgent: false,
+    },
+    {
+      label: "Monthly Donations",
+      value: "$3,210",
+      sub: "vs $2,990 last month",
+      trend: "+7.4%",
+      positive: true,
+      icon: TrendingUp,
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+      urgent: false,
+    },
+    {
+      label: isIndividual ? "Submitted Givings" : "Pending Disbursements",
+      value: "$6,840",
+      sub: isIndividual ? "3 submitted this month" : "3 awaiting processing",
+      trend: isIndividual ? "In progress" : "Action needed",
+      positive: isIndividual ? true : false,
+      icon: Clock,
+      color: isIndividual ? "text-blue-600" : "text-amber-600",
+      bg: isIndividual ? "bg-blue-50" : "bg-amber-50",
+      urgent: !isIndividual,
+    },
+    {
+      label: "Contribution Methods",
+      value: "2 Active",
+      sub: "Bank transfer · Cards",
+      trend: "Configure more",
+      positive: true,
+      icon: CreditCard,
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+      urgent: false,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, i) => (

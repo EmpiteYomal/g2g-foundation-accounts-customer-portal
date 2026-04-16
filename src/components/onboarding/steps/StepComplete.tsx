@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, Building2, Users, Clock } from "lucide-react";
+import { CheckCircle2, ArrowRight, Building2, Users, Clock, User } from "lucide-react";
 import type { OnboardingData } from "../OnboardingFlow";
 
 type Props = {
@@ -15,8 +15,9 @@ const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export function StepComplete({ data, onFinish }: Props) {
   const [checked, setChecked] = useState<number[]>([]);
+  const isIndividual = data.accountType === "person";
 
-  const steps = [
+  const orgSteps = [
     {
       icon: Building2,
       label: "Organisation profile submitted",
@@ -33,6 +34,21 @@ export function StepComplete({ data, onFinish }: Props) {
       sub: "G2G staff will verify your documents and approve your Foundation Account",
     },
   ];
+
+  const personSteps = [
+    {
+      icon: User,
+      label: "Personal details submitted",
+      sub: `${data.personal.firstName} ${data.personal.lastName} · ${data.personal.suburb || "Australia"}`,
+    },
+    {
+      icon: Clock,
+      label: "Awaiting G2G review",
+      sub: "G2G staff will verify your identity and activate your Foundation Account",
+    },
+  ];
+
+  const steps = isIndividual ? personSteps : orgSteps;
 
   useEffect(() => {
     (async () => {
@@ -59,7 +75,9 @@ export function StepComplete({ data, onFinish }: Props) {
       <div className="space-y-3">
         <h2 className="text-3xl font-bold text-foreground">Application submitted!</h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Your Foundation Account application has been sent to G2G for review. Here&apos;s a summary of what we&apos;ve received.
+          {isIndividual
+            ? "Your personal Foundation Account application has been sent to G2G for review."
+            : "Your Foundation Account application has been sent to G2G for review. Here's a summary of what we've received."}
         </p>
       </div>
 
@@ -99,18 +117,37 @@ export function StepComplete({ data, onFinish }: Props) {
       <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 text-left space-y-2">
         <p className="text-sm font-semibold text-amber-900">What happens next?</p>
         <ul className="text-sm text-amber-800 space-y-1.5">
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-            G2G staff will review and validate your organisation documents
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-            Once approved, your Foundation Sub-Account will be automatically created
-          </li>
-          <li className="flex items-start gap-2">
-            <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
-            You&apos;ll receive a welcome email with access to your Foundation Dashboard
-          </li>
+          {isIndividual ? (
+            <>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                G2G staff will review and verify your personal details
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                Once approved, your personal Foundation Account will be activated
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                You&apos;ll receive a welcome email with access to your Foundation Dashboard
+              </li>
+            </>
+          ) : (
+            <>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                G2G staff will review and validate your organisation documents
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                Once approved, your Foundation Sub-Account will be automatically created
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 flex-shrink-0" />
+                You&apos;ll receive a welcome email with access to your Foundation Dashboard
+              </li>
+            </>
+          )}
         </ul>
       </div>
 
