@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { ArrowRight, ArrowLeft } from "lucide-react";
 
 export type PersonalData = {
-  firstName: string;
-  lastName: string;
   dateOfBirth: string;
   phone: string;
   address: string;
@@ -27,8 +25,6 @@ const AU_STATES = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
 
 export function StepPersonal({ data, onChange, onNext, onBack }: Props) {
   const canContinue =
-    data.firstName.trim() &&
-    data.lastName.trim() &&
     data.dateOfBirth.trim() &&
     data.phone.trim() &&
     data.address.trim() &&
@@ -46,30 +42,6 @@ export function StepPersonal({ data, onChange, onNext, onBack }: Props) {
       </div>
 
       <div className="space-y-6">
-        {/* Name row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="firstName">First name</Label>
-            <Input
-              id="firstName"
-              value={data.firstName}
-              onChange={(e) => onChange({ firstName: e.target.value })}
-              placeholder="Jane"
-              className="rounded-xl"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="lastName">Last name</Label>
-            <Input
-              id="lastName"
-              value={data.lastName}
-              onChange={(e) => onChange({ lastName: e.target.value })}
-              placeholder="Smith"
-              className="rounded-xl"
-            />
-          </div>
-        </div>
-
         {/* DOB + Phone */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">

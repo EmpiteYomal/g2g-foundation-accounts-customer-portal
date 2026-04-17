@@ -37,8 +37,6 @@ export type OnboardingData = {
     dateOfBirth: string;
   };
   personal: {
-    firstName: string;
-    lastName: string;
     dateOfBirth: string;
     phone: string;
     address: string;
@@ -90,8 +88,6 @@ export function OnboardingFlow() {
       dateOfBirth: "",
     },
     personal: {
-      firstName: "",
-      lastName: "",
       dateOfBirth: "",
       phone: "",
       address: "",
