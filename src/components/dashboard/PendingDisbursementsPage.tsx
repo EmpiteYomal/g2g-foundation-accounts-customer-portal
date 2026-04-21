@@ -22,6 +22,7 @@ import {
   Repeat,
   ShieldCheck,
   Download,
+  SlidersHorizontal,
 } from "lucide-react";
 import { downloadABA } from "@/lib/abaDownload";
 import { Button } from "@/components/ui/button";
@@ -54,12 +55,17 @@ type DisbursementPackage = {
   charities: CharityLine[];
 };
 
+type ScoreItem = { label: string; score: number; max: number; description: string };
+type ScoreSection = { label: string; score: number; max: number; items: ScoreItem[] };
+type CharityScore = { total: number; maxTotal: number; sections: ScoreSection[] };
+
 type ApprovedCharity = {
   id: string;
   name: string;
   category: string;
   abn: string;
   location: string;
+  score: CharityScore;
 };
 
 type SelectedCharity = ApprovedCharity & { allocation: number };
@@ -74,15 +80,100 @@ type DistributionForm = {
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
+function makeScore(
+  finItems: [number, string, number, string][],
+  progItems: [number, string, number, string][],
+  govItems: [number, string, number, string][],
+  resItems: [number, string, number, string][]
+): CharityScore {
+  const toSection = (label: string, max: number, items: [number, string, number, string][]): ScoreSection => ({
+    label,
+    score: items.reduce((s, i) => s + i[0], 0),
+    max,
+    items: items.map(([score, itemLabel, itemMax, description]) => ({ score, label: itemLabel, max: itemMax, description })),
+  });
+  const sections = [
+    toSection("Financial Health", 3, finItems),
+    toSection("Program Effectiveness", 3, progItems),
+    toSection("Governance & Transparency", 2, govItems),
+    toSection("Resilience & Risk Management", 2, resItems),
+  ];
+  return { total: sections.reduce((s, sec) => s + sec.score, 0), maxTotal: 10, sections };
+}
+
 const APPROVED_CHARITIES: ApprovedCharity[] = [
-  { id: "c1", name: "Red Cross Australia",   category: "Humanitarian",     abn: "50 169 561 394", location: "Melbourne, VIC" },
-  { id: "c2", name: "WHO Foundation",         category: "Global Health",    abn: "—",              location: "Geneva (Intl)" },
-  { id: "c3", name: "ACLU Foundation",        category: "Civil Liberties",  abn: "—",              location: "New York (Intl)" },
-  { id: "c4", name: "Salvation Army",         category: "Community",        abn: "42 609 278 633", location: "Sydney, NSW" },
-  { id: "c5", name: "Alzheimer's Australia",  category: "Health Research",  abn: "79 625 733 633", location: "Canberra, ACT" },
-  { id: "c6", name: "Beyond Blue",            category: "Mental Health",    abn: "87 093 865 840", location: "Melbourne, VIC" },
-  { id: "c7", name: "Cancer Council",         category: "Health Research",  abn: "51 116 463 846", location: "Sydney, NSW" },
-  { id: "c8", name: "Oxfam Australia",        category: "Poverty Relief",   abn: "18 055 208 636", location: "Melbourne, VIC" },
+  {
+    id: "c1", name: "Red Cross Australia", category: "Humanitarian", abn: "50 169 561 394", location: "Melbourne, VIC",
+    score: makeScore(
+      [[1.5, "Revenue vs. Expenses", 1.5, "Operates close to break-even with strong funding reserves."], [1.5, "Asset to Liability Ratio", 1.5, "Strong asset base relative to liabilities."]],
+      [[2, "Program Reach", 2, "Serves millions across disaster relief, blood services, and support."], [1.5, "Described Impact & Outcomes", 1.5, "Well-documented outcomes with annual impact reports."]],
+      [[2, "Reporting & Compliance", 2, "Fully ACNC-registered with audited financials published annually."]],
+      [[1.5, "Handling of Unforeseen Circumstances", 2, "Demonstrated resilience during COVID-19 and natural disasters."]]
+    ),
+  },
+  {
+    id: "c2", name: "WHO Foundation", category: "Global Health", abn: "—", location: "Geneva (Intl)",
+    score: makeScore(
+      [[1, "Revenue vs. Expenses", 1.5, "Operates with a surplus; reliant on donor pledges."], [1, "Asset to Liability Ratio", 1.5, "Moderate asset base; liabilities managed within policy."]],
+      [[2, "Program Reach", 2, "Global health initiatives across 194 member states."], [1, "Described Impact & Outcomes", 1.5, "Impact metrics reported but lag by 12–18 months."]],
+      [[1.5, "Reporting & Compliance", 2, "Annual reports published; some disclosure gaps noted."]],
+      [[1, "Handling of Unforeseen Circumstances", 2, "COVID-19 response highlighted coordination challenges."]]
+    ),
+  },
+  {
+    id: "c3", name: "ACLU Foundation", category: "Civil Liberties", abn: "—", location: "New York (Intl)",
+    score: makeScore(
+      [[1, "Revenue vs. Expenses", 1.5, "Modest surplus; heavily litigation-funded."], [1, "Asset to Liability Ratio", 1.5, "Stable balance sheet with endowment backing."]],
+      [[1.5, "Program Reach", 2, "Cases impact millions through landmark rulings."], [0.5, "Described Impact & Outcomes", 1.5, "Outcomes difficult to quantify; litigation timelines variable."]],
+      [[1, "Reporting & Compliance", 2, "US-based reporting standards; limited international disclosure."]],
+      [[0.5, "Handling of Unforeseen Circumstances", 2, "Limited evidence of risk-management frameworks."]]
+    ),
+  },
+  {
+    id: "c4", name: "Salvation Army", category: "Community", abn: "42 609 278 633", location: "Sydney, NSW",
+    score: makeScore(
+      [[1.5, "Revenue vs. Expenses", 1.5, "Consistent surplus reinvested into community programs."], [1, "Asset to Liability Ratio", 1.5, "Large property holdings offset by operational debt."]],
+      [[2, "Program Reach", 2, "Reaches over 1M Australians annually across 400+ centres."], [1, "Described Impact & Outcomes", 1.5, "Impact reporting present but inconsistent across divisions."]],
+      [[1.5, "Reporting & Compliance", 2, "ACNC-registered; audited financials publicly available."]],
+      [[1.5, "Handling of Unforeseen Circumstances", 2, "Strong disaster-response track record over decades."]]
+    ),
+  },
+  {
+    id: "c5", name: "Alzheimer's Australia", category: "Health Research", abn: "79 625 733 633", location: "Canberra, ACT",
+    score: makeScore(
+      [[1, "Revenue vs. Expenses", 1.5, "Operates at a slight deficit; dependent on government grants."], [1, "Asset to Liability Ratio", 1.5, "Adequate asset base; limited liquid reserves."]],
+      [[1.5, "Program Reach", 2, "Supports ~400K Australians living with dementia."], [0.5, "Described Impact & Outcomes", 1.5, "Research outcomes published but program impact harder to measure."]],
+      [[1, "Reporting & Compliance", 2, "ACNC registered; some annual report delays observed."]],
+      [[0.5, "Handling of Unforeseen Circumstances", 2, "Limited published continuity or risk framework."]]
+    ),
+  },
+  {
+    id: "c6", name: "Beyond Blue", category: "Mental Health", abn: "87 093 865 840", location: "Melbourne, VIC",
+    score: makeScore(
+      [[1.5, "Revenue vs. Expenses", 1.5, "Strong government and corporate funding with small surplus."], [1.5, "Asset to Liability Ratio", 1.5, "Healthy asset base with minimal liabilities."]],
+      [[2, "Program Reach", 2, "3M+ website visits/month; crisis line handles 300K contacts/year."], [1.5, "Described Impact & Outcomes", 1.5, "Evidence-based programs with third-party evaluation."]],
+      [[2, "Reporting & Compliance", 2, "ACNC registered; Best Practice Governance certified."]],
+      [[1.5, "Handling of Unforeseen Circumstances", 2, "Scaled operations effectively during COVID-19 crisis spike."]]
+    ),
+  },
+  {
+    id: "c7", name: "Cancer Council", category: "Health Research", abn: "51 116 463 846", location: "Sydney, NSW",
+    score: makeScore(
+      [[1.5, "Revenue vs. Expenses", 1.5, "Consistent surplus; diversified fundraising base."], [1, "Asset to Liability Ratio", 1.5, "Good asset coverage; property portfolio well managed."]],
+      [[2, "Program Reach", 2, "Australia-wide research, prevention, and support programs."], [1.5, "Described Impact & Outcomes", 1.5, "Annual impact reports with measurable research milestones."]],
+      [[2, "Reporting & Compliance", 2, "ACNC registered; full financial disclosure each year."]],
+      [[1, "Handling of Unforeseen Circumstances", 2, "Adapted clinical-trial programs during COVID-19."]]
+    ),
+  },
+  {
+    id: "c8", name: "Oxfam Australia", category: "Poverty Relief", abn: "18 055 208 636", location: "Melbourne, VIC",
+    score: makeScore(
+      [[0.5, "Revenue vs. Expenses", 1.5, "Recent operating deficit; restructuring underway."], [1, "Asset to Liability Ratio", 1.5, "Asset base declining following restructure."]],
+      [[1.5, "Program Reach", 2, "Active in 20+ countries; strong gender-equality focus."], [1, "Described Impact & Outcomes", 1.5, "Outcome evidence strong internationally, weaker domestically."]],
+      [[1.5, "Reporting & Compliance", 2, "ACNC registered; independent audit completed annually."]],
+      [[0.5, "Handling of Unforeseen Circumstances", 2, "Staff reductions raised concerns over program continuity."]]
+    ),
+  },
 ];
 
 const PACKAGES: DisbursementPackage[] = [
@@ -166,6 +257,10 @@ function NewDistributionModal({ onClose, onSubmit, isIndividual = false }: { onC
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [catSearch, setCatSearch] = useState("");
+  const [catDropdownOpen, setCatDropdownOpen] = useState(false);
+  const [scoreTooltip, setScoreTooltip] = useState<{ charity: ApprovedCharity; rect: DOMRect } | null>(null);
   const [form, setForm] = useState<DistributionForm>({
     charities: [],
     amount: "",
@@ -174,17 +269,23 @@ function NewDistributionModal({ onClose, onSubmit, isIndividual = false }: { onC
     visibility: "public",
   });
 
+  const ALL_CATEGORIES = useMemo(
+    () => Array.from(new Set(APPROVED_CHARITIES.map((c) => c.category))).sort(),
+    []
+  );
+
   const filteredCharities = useMemo(() => {
     const q = search.toLowerCase();
     return APPROVED_CHARITIES.filter(
       (c) =>
         !form.charities.find((s) => s.id === c.id) &&
+        (categoryFilter ? c.category === categoryFilter : true) &&
         (c.name.toLowerCase().includes(q) ||
           c.category.toLowerCase().includes(q) ||
           c.abn.toLowerCase().includes(q) ||
           c.location.toLowerCase().includes(q))
     );
-  }, [search, form.charities]);
+  }, [search, categoryFilter, form.charities]);
 
   const totalAlloc = form.charities.reduce((s, c) => s + c.allocation, 0);
   const allocValid = form.charities.length > 0 && totalAlloc === 100;
@@ -412,23 +513,105 @@ function NewDistributionModal({ onClose, onSubmit, isIndividual = false }: { onC
                       className="pl-9 h-10 rounded-xl text-sm"
                     />
                   </div>
+
+                  {/* Category filter dropdown */}
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => { setCatDropdownOpen((v) => !v); setCatSearch(""); }}
+                      className={`flex items-center justify-between gap-2 w-full h-9 px-3 rounded-xl border text-sm transition-colors ${
+                        categoryFilter
+                          ? "border-primary bg-primary/5 text-primary"
+                          : "border-border text-muted-foreground hover:border-foreground/30"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <SlidersHorizontal className="w-3.5 h-3.5 flex-shrink-0" />
+                        <span>{categoryFilter ?? "Filter by category"}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {categoryFilter && (
+                          <span
+                            role="button"
+                            onClick={(e) => { e.stopPropagation(); setCategoryFilter(null); setCatDropdownOpen(false); }}
+                            className="w-4 h-4 rounded-full flex items-center justify-center hover:bg-primary/20 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                          </span>
+                        )}
+                        <ChevronDown className={`w-3.5 h-3.5 transition-transform ${catDropdownOpen ? "rotate-180" : ""}`} />
+                      </div>
+                    </button>
+
+                    {catDropdownOpen && (
+                      <div className="absolute z-20 top-full mt-1 w-full bg-white rounded-xl border border-border shadow-lg overflow-hidden">
+                        <div className="p-2 border-b border-border">
+                          <div className="relative">
+                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                            <input
+                              autoFocus
+                              value={catSearch}
+                              onChange={(e) => setCatSearch(e.target.value)}
+                              placeholder="Search categories…"
+                              className="w-full pl-7 pr-3 h-8 text-xs rounded-lg border border-input bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+                            />
+                          </div>
+                        </div>
+                        <div className="max-h-44 overflow-y-auto">
+                          <button
+                            type="button"
+                            onClick={() => { setCategoryFilter(null); setCatDropdownOpen(false); }}
+                            className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-muted/50 ${!categoryFilter ? "font-semibold text-primary" : "text-muted-foreground"}`}
+                          >
+                            All categories
+                          </button>
+                          {ALL_CATEGORIES.filter((c) => c.toLowerCase().includes(catSearch.toLowerCase())).map((cat) => (
+                            <button
+                              key={cat}
+                              type="button"
+                              onClick={() => { setCategoryFilter(cat); setCatDropdownOpen(false); }}
+                              className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-muted/50 ${categoryFilter === cat ? "font-semibold text-primary" : "text-foreground"}`}
+                            >
+                              {cat}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="max-h-52 overflow-y-auto rounded-xl border border-border divide-y divide-border/60">
                     {filteredCharities.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-6">No charities found</p>
                     ) : (
-                      filteredCharities.map((c) => (
-                        <button
-                          key={c.id}
-                          onClick={() => addCharity(c)}
-                          className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-primary/5 transition-colors text-left"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-sm font-semibold text-foreground truncate">{c.name}</p>
-                            <p className="text-xs text-muted-foreground">{c.category} · {c.location} · ABN {c.abn}</p>
-                          </div>
-                          <Plus className="w-4 h-4 text-primary flex-shrink-0" />
-                        </button>
-                      ))
+                      filteredCharities.map((c) => {
+                        const s = c.score;
+                        const pct = s.total / s.maxTotal;
+                        const pillCls = pct >= 0.7 ? "bg-emerald-50 text-emerald-700 border-emerald-200" : pct >= 0.4 ? "bg-amber-50 text-amber-700 border-amber-200" : "bg-rose-50 text-rose-700 border-rose-200";
+                        return (
+                          <button
+                            key={c.id}
+                            onClick={() => addCharity(c)}
+                            className="w-full flex items-center justify-between gap-3 px-4 py-3 hover:bg-primary/5 transition-colors text-left"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-semibold text-foreground truncate">{c.name}</p>
+                              <p className="text-xs text-muted-foreground">{c.category} · {c.location} · ABN {c.abn}</p>
+                            </div>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span
+                                className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full border cursor-help ${pillCls}`}
+                                onMouseEnter={(e) => { e.stopPropagation(); setScoreTooltip({ charity: c, rect: e.currentTarget.getBoundingClientRect() }); }}
+                                onMouseLeave={() => setScoreTooltip(null)}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                ★ {s.total}/{s.maxTotal}
+                              </span>
+                              <Plus className="w-4 h-4 text-primary" />
+                            </div>
+                          </button>
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -603,6 +786,52 @@ function NewDistributionModal({ onClose, onSubmit, isIndividual = false }: { onC
             )}
           </AnimatePresence>
         </div>
+
+        {/* Score tooltip */}
+        {scoreTooltip && (() => {
+          const { charity, rect } = scoreTooltip;
+          const s = charity.score;
+          const top = rect.bottom + 8;
+          const left = Math.min(rect.right - 280, window.innerWidth - 296);
+          return (
+            <div
+              className="fixed z-[60] w-72 bg-white rounded-2xl border border-border shadow-xl p-4 space-y-3 pointer-events-none"
+              style={{ top, left }}
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-bold text-foreground">Impact Score</p>
+                <span className="text-base font-bold text-foreground">{s.total} / {s.maxTotal}</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={`h-full rounded-full ${s.total / s.maxTotal >= 0.7 ? "bg-emerald-500" : s.total / s.maxTotal >= 0.4 ? "bg-amber-400" : "bg-rose-500"}`}
+                  style={{ width: `${(s.total / s.maxTotal) * 100}%` }}
+                />
+              </div>
+              <div className="space-y-2.5">
+                {s.sections.map((sec) => (
+                  <div key={sec.label}>
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-xs font-semibold text-foreground">{sec.label}</p>
+                      <p className="text-xs font-semibold text-muted-foreground">{sec.score} / {sec.max}</p>
+                    </div>
+                    <div className="space-y-1">
+                      {sec.items.map((item) => (
+                        <div key={item.label} className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-xs font-medium text-foreground">{item.label}</p>
+                            <p className="text-[11px] text-muted-foreground leading-tight">{item.description}</p>
+                          </div>
+                          <span className="text-xs font-semibold text-muted-foreground flex-shrink-0">{item.score} pts</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Footer */}
         {!submitted && (
