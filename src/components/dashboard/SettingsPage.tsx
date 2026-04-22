@@ -16,12 +16,133 @@ import {
   User,
   Lock,
   ShieldCheck,
+  Palette,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const AU_STATES = ["ACT", "NSW", "NT", "QLD", "SA", "TAS", "VIC", "WA"];
+
+// ─── Theme helpers ────────────────────────────────────────────────────────────
+
+const THEME_STORAGE_KEY = "portalPrimaryColor";
+const DEFAULT_PRIMARY    = "#F05123";
+
+const PRESET_COLORS = [
+  { name: "G2G Orange", hex: "#F05123" },
+  { name: "Sky Blue",   hex: "#0EA5E9" },
+  { name: "Indigo",     hex: "#6366F1" },
+  { name: "Emerald",    hex: "#10B981" },
+  { name: "Rose",       hex: "#F43F5E" },
+  { name: "Amber",      hex: "#F59E0B" },
+  { name: "Teal",       hex: "#14B8A6" },
+  { name: "Purple",     hex: "#A855F7" },
+];
+
+function applyPrimaryColor(hex: string) {
+  const root = document.documentElement;
+  root.style.setProperty("--primary",           hex);
+  root.style.setProperty("--ring",              hex);
+  root.style.setProperty("--accent-foreground", hex);
+  root.style.setProperty("--sidebar-primary",   hex);
+  root.style.setProperty("--sidebar-ring",      hex);
+}
+
+function ThemeCustomizationSection() {
+  const [active,  setActive]  = useState(DEFAULT_PRIMARY);
+  const [custom,  setCustom]  = useState(DEFAULT_PRIMARY);
+  const [applied, setApplied] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY) ?? DEFAULT_PRIMARY;
+    setActive(saved);
+    setCustom(saved);
+    applyPrimaryColor(saved);
+  }, []);
+
+  const pick = (hex: string) => {
+    setActive(hex);
+    setCustom(hex);
+    applyPrimaryColor(hex);
+  };
+
+  const handleApply = () => {
+    localStorage.setItem(THEME_STORAGE_KEY, active);
+    setApplied(true);
+    setTimeout(() => setApplied(false), 2000);
+  };
+
+  const handleReset = () => {
+    pick(DEFAULT_PRIMARY);
+    localStorage.setItem(THEME_STORAGE_KEY, DEFAULT_PRIMARY);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-border p-6 space-y-5">
+      <div className="flex items-center gap-2">
+        <Palette className="w-4 h-4 text-muted-foreground" />
+        <h2 className="text-sm font-semibold text-foreground">Theme Customisation</h2>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Choose a primary colour that applies to buttons, links, and accents across the portal.
+      </p>
+
+      {/* Preset swatches */}
+      <div className="flex flex-wrap gap-3">
+        {PRESET_COLORS.map((p) => (
+          <button
+            key={p.hex}
+            onClick={() => pick(p.hex)}
+            title={p.name}
+            className="relative w-9 h-9 rounded-full transition-all focus:outline-none"
+            style={{
+              backgroundColor: p.hex,
+              boxShadow: active === p.hex ? `0 0 0 3px white, 0 0 0 5px ${p.hex}` : "none",
+            }}
+          >
+            {active === p.hex && (
+              <Check className="w-4 h-4 text-white absolute inset-0 m-auto" />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom colour picker + apply */}
+      <div className="flex items-center gap-3 pt-1 flex-wrap">
+        <label className="flex items-center gap-2.5 cursor-pointer border border-border rounded-xl px-3 py-2 hover:bg-muted/20 transition-colors">
+          <div className="w-5 h-5 rounded-md flex-shrink-0" style={{ backgroundColor: custom }} />
+          <span className="text-xs font-mono text-foreground">{custom.toUpperCase()}</span>
+          <span className="text-xs text-muted-foreground">Custom</span>
+          <input
+            type="color"
+            value={custom}
+            onChange={(e) => pick(e.target.value)}
+            className="sr-only"
+          />
+        </label>
+
+        <div className="flex-1" />
+
+        {active !== DEFAULT_PRIMARY && (
+          <button
+            onClick={handleReset}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Reset to default
+          </button>
+        )}
+
+        <Button onClick={handleApply} size="sm" className="rounded-xl h-8 text-xs gap-1.5">
+          {applied
+            ? <><CheckCircle2 className="w-3.5 h-3.5" /> Applied</>
+            : "Apply colour"}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 // ─── Shared field component ───────────────────────────────────────────────────
 
@@ -145,6 +266,8 @@ function OrgSettings() {
       </div>
 
       <OrgLogoSection editing={editing} />
+
+      <ThemeCustomizationSection />
 
       <div className="bg-white rounded-2xl border border-border p-6 space-y-5">
         <div className="flex items-center gap-2">

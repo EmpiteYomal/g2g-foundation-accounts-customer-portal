@@ -30,6 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background">
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var c=localStorage.getItem('portalPrimaryColor');if(c){var r=document.documentElement.style;r.setProperty('--primary',c);r.setProperty('--ring',c);r.setProperty('--accent-foreground',c);r.setProperty('--sidebar-primary',c);r.setProperty('--sidebar-ring',c);}}catch(e){}})();` }} />
         {children}
         <Toaster richColors position="top-right" />
       </body>
